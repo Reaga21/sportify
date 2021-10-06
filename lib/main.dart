@@ -5,18 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sportify/src/views/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
       home: Scaffold(
-          appBar: AppBar(title: Text("Firebase Authentication")),
-          body: MyLogin())));
+          appBar: AppBar(title: const Text("Firebase Authentication")),
+          body: const MyLogin())));
 }
 
 class MyLogin extends StatefulWidget {
+  const MyLogin({Key key}) : super(key: key);
+
   @override
   _MyLoginState createState() => _MyLoginState();
 }
@@ -42,24 +44,30 @@ class _MyLoginState extends State<MyLogin> {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SignInButton(Buttons.Email,
-            onPressed: () => loginWithEmail(_emailInput.text, _passInput.text)),
+        SignInButton(
+          Buttons.Email,
+          onPressed: () {
+            loginWithEmail(_emailInput.text, _passInput.text).then((_) =>
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomePage())));
+          },
+        ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           SizedBox(
               width: 150,
               child: TextField(
                   controller: _emailInput,
-                  decoration: InputDecoration(hintText: 'Email'))),
+                  decoration: const InputDecoration(hintText: 'Email'))),
           SizedBox(
               width: 150,
               child: TextField(
                   controller: _passInput,
                   obscureText: true,
-                  decoration: InputDecoration(hintText: 'Password'))),
+                  decoration: const InputDecoration(hintText: 'Password'))),
         ]),
         Container(child: userInfo()),
         ElevatedButton(
-            child: Text('Sign out'),
+            child: const Text('Sign out'),
             style: ElevatedButton.styleFrom(primary: Colors.red),
             onPressed: user != null ? () => logout() : null)
       ],
@@ -67,7 +75,7 @@ class _MyLoginState extends State<MyLogin> {
   }
 
   Widget userInfo() {
-    if (user == null) return Text('Not signed in.');
+    if (user == null) return const Text('Not signed in.');
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       if (user.photoURL != null) Image.network(user.photoURL, width: 50),
       Text(
@@ -76,17 +84,9 @@ class _MyLoginState extends State<MyLogin> {
   }
 
   Future<UserCredential> loginWithEmail(String email, String pass) {
-    try {
-      return FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: pass);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-      return Future.value(null);
-    }
+    return FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: pass);
   }
+
   logout() => FirebaseAuth.instance.signOut();
 }
