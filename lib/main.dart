@@ -1,5 +1,3 @@
-// @dart=2.11
-// github_sign_in 0.0.4 is not null safe, 2021-05-18
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,18 +11,18 @@ void main() async {
   runApp(MaterialApp(
       home: Scaffold(
           appBar: AppBar(title: const Text("Firebase Authentication")),
-          body: const MyLogin())));
+          body: MyLogin())));
 }
 
 class MyLogin extends StatefulWidget {
-  const MyLogin({Key key}) : super(key: key);
+  const MyLogin({Key? key}) : super(key: key);
 
   @override
   _MyLoginState createState() => _MyLoginState();
 }
 
 class _MyLoginState extends State<MyLogin> {
-  User user;
+  late User? user;
 
   final _emailInput = TextEditingController(text: 'bob@example.com');
   final _passInput = TextEditingController(text: 'secret');
@@ -33,7 +31,7 @@ class _MyLoginState extends State<MyLogin> {
   void initState() {
     super.initState();
 
-    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() => this.user = user);
     });
   }
@@ -77,9 +75,9 @@ class _MyLoginState extends State<MyLogin> {
   Widget userInfo() {
     if (user == null) return const Text('Not signed in.');
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      if (user.photoURL != null) Image.network(user.photoURL, width: 50),
+      if (user!.photoURL != null) Image.network(user!.photoURL ?? '', width: 50),
       Text(
-          'Signed in as ${user.displayName != null ? user.displayName + ', ' : ''}${user.email}.')
+          'Signed in as ${user!.displayName != null ? user!.displayName! + ', ' : ''}${user!.email}.')
     ]);
   }
 
