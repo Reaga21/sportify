@@ -10,9 +10,8 @@ class StepCounter {
   final String _yesterday = DateFormat('yyyy-MM-dd')
       .format(DateTime.now().subtract(const Duration(days: 1)));
 
-
-  Future<DocumentSnapshot> savedSteps () {
-    return FirebaseFirestore.instance.collection('steps').doc(uid).get();
+  Future<DocumentSnapshot> savedSteps() async {
+    return await FirebaseFirestore.instance.collection('steps').doc(uid).get();
   }
 
   StepCounter(this.uid) {
@@ -27,6 +26,5 @@ class StepCounter {
   onStepError(StepCount error) {
     // handle error
     print(error);
-
   }
 }
