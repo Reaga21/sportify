@@ -11,9 +11,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(title: const Text("Firebase Authentication")),
-          body: const MyLogin())));
+    home: Scaffold(
+      appBar: AppBar(
+        title: const Text("Firebase Authentication"),
+      ),
+      body: const MyLogin(),
+    ),
+  ));
 }
 
 class MyLogin extends StatefulWidget {
@@ -26,8 +30,8 @@ class MyLogin extends StatefulWidget {
 class _MyLoginState extends State<MyLogin> {
   User user;
 
-  final _emailInput = TextEditingController(text: 'bob@example.com');
-  final _passInput = TextEditingController(text: 'secret');
+  final _emailInput = TextEditingController(text: 'klaas.pelzer@gmail.com');
+  final _passInput = TextEditingController(text: '123456');
 
   @override
   void initState() {
@@ -47,9 +51,10 @@ class _MyLoginState extends State<MyLogin> {
         SignInButton(
           Buttons.Email,
           onPressed: () {
-            loginWithEmail(_emailInput.text, _passInput.text).then((_) =>
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const HomePage())));
+            loginWithEmail(_emailInput.text, _passInput.text).then((_) {
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => const HomePage()));
+            });
           },
         ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
