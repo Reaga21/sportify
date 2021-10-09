@@ -11,6 +11,7 @@ void main() async {
     home: Scaffold(
       appBar: AppBar(
         title: const Text("Firebase Authentication"),
+        backgroundColor: Colors.redAccent,
       ),
       body: const MyLogin(),
     ),

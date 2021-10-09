@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sportify/src/util/dates.dart' as dates;
 
@@ -30,11 +28,14 @@ class UserModel {
 
   /// calcs the new Steps from [stepsFromPedometer]
   int calcNewSteps(int stepsFromPedometer) {
-    int countedSteps = getLatestStepsAbs();
+    int savedSteps = getLatestStepsAbs();
     int newSteps = 0;
-
-    if (countedSteps < stepsFromPedometer) {
-      newSteps = stepsFromPedometer - countedSteps;
+    if(savedSteps == 0){
+      // first record => zero new steps
+      newSteps = 0;
+    }
+    else if (savedSteps <= stepsFromPedometer) {
+      newSteps = stepsFromPedometer - savedSteps;
     } else {
       // phone did restart and reset the pedometer
       // newSteps are equal to steps from pedometer

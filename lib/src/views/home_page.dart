@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pedometer/pedometer.dart';
 import 'package:sportify/src/models/user_model.dart';
-import 'package:sportify/src/util/stepcounter.dart';
-import 'package:intl/intl.dart';
+import 'package:sportify/src/shared_widgets/step_box.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,44 +12,127 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  late UserModel user;
 
-  Future<DocumentSnapshot> getSteps() async {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    StepCounter mCounter = StepCounter(uid);
-    return mCounter.savedSteps();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      Map<String, dynamic> json = user.toJson();
+      FirebaseFirestore.instance
+          .collection('steps')
+          .doc(uid)
+          .update(json)
+          .then((value) => print("User updated"))
+          .catchError((error) => print("Failed to update steps: $error"));
+    }
+  }
+
+  Stream<int> setup() async* {
+    DocumentSnapshot snap =
+        await FirebaseFirestore.instance.collection('steps').doc(uid).get();
+    user = UserModel.fromJson(snap.data() as Map<String, dynamic>);
+    yield user.getTodaySteps();
+    await for (StepCount event in pedometerStream) {
+      user.updateTodaySteps(event.steps);
+      yield user.getTodaySteps();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    getSteps();
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("AppBar"), //title aof appbar
-          backgroundColor: Colors.redAccent, //background color of appbar
-        ),
-        body: Center(
-          child: FutureBuilder<DocumentSnapshot>(
-            future: getSteps(),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasError) {
-                return const Text("Something went wrong");
-              }
+      appBar: AppBar(
+        title: const Text("Sportify"), //title aof appbar
+        backgroundColor: Colors.redAccent, //background color of appbar
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.center,
+            child: StreamBuilder<int>(
+                stream: setup(),
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  List<Widget> children;
+                  if (snapshot.hasError) {
+                    children = <Widget>[
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 60,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text('Error: ${snapshot.error}'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text('Stack trace: ${snapshot.stackTrace}'),
+                      ),
+                    ];
+                  } else {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                        children = const <Widget>[
+                          Icon(
+                            Icons.info,
+                            color: Colors.blue,
+                            size: 60,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Select a lot'),
+                          )
+                        ];
+                        break;
+                      case ConnectionState.waiting:
+                        children = const <Widget>[
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            width: 60,
+                            height: 60,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting bids...'),
+                          )
+                        ];
+                        break;
+                      case ConnectionState.active:
+                        children = <Widget>[
+                          stepBox(snapshot.data.toString())
+                        ];
+                        break;
+                      case ConnectionState.done:
+                        children = <Widget>[
+                          stepBox(snapshot.data.toString())
+                        ];
+                        break;
+                    }
+                  }
 
-              if (snapshot.hasData && !snapshot.data!.exists) {
-                return const Text("Document does not exist");
-              }
-
-              if (snapshot.connectionState == ConnectionState.done) {
-                UserModel user = UserModel.fromJson(
-                    snapshot.data!.data() as Map<String, dynamic>);
-                return Text("Steps: ${user.getTodaySteps()}");
-              }
-
-              return const CircularProgressIndicator();
-            },
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: children,
+                  );
+                }),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }
+
+
