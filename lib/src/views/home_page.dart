@@ -1,9 +1,53 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/shared_widgets/step_box.dart';
+import 'package:workmanager/workmanager.dart';
+
+const updateStepsTask = "updateStepsTask";
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    print("Hi");
+    switch (task) {
+      case updateStepsTask:
+        await Firebase.initializeApp();
+        final String uid = inputData!['uid'];
+        try {
+          DocumentSnapshot snap = await FirebaseFirestore.instance
+              .collection('steps')
+              .doc(uid)
+              .get();
+          UserModel user =
+              UserModel.fromJson(snap.data() as Map<String, dynamic>);
+          final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
+          int stepsAbs = (await pedometerStream.first).steps;
+          user.updateTodaySteps(stepsAbs);
+          updateSteps(user, uid);
+          print("WORKMANAGER UPDATED ${user.getTodaySteps()}");
+        } catch (error) {
+          print(error);
+        }
+
+        return true;
+    }
+
+    return Future.value(true);
+  });
+}
+
+void updateSteps(UserModel user, String uid) {
+  Map<String, dynamic> json = user.toJson();
+  FirebaseFirestore.instance
+      .collection('steps')
+      .doc(uid)
+      .update(json)
+      .then((value) => print("User updated"))
+      .catchError((error) => print("Failed to update steps: $error"));
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,20 +71,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-      Map<String, dynamic> json = user.toJson();
-      FirebaseFirestore.instance
-          .collection('steps')
-          .doc(uid)
-          .update(json)
-          .then((value) => print("User updated"))
-          .catchError((error) => print("Failed to update steps: $error"));
+      updateSteps(user, uid);
     }
   }
 
-  Stream<int> setup() async* {
+  Stream<int> getSteps() async* {
     DocumentSnapshot snap =
         await FirebaseFirestore.instance.collection('steps').doc(uid).get();
     user = UserModel.fromJson(snap.data() as Map<String, dynamic>);
+    await Workmanager().initialize(callbackDispatcher);
+    await Workmanager().registerPeriodicTask("1", updateStepsTask, inputData: {
+      "uid": uid,
+    });
     yield user.getTodaySteps();
     await for (StepCount event in pedometerStream) {
       user.updateTodaySteps(event.steps);
@@ -52,8 +94,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sportify"), //title aof appbar
-        backgroundColor: Colors.redAccent, //background color of appbar
+        title: const Text("Sportify"),
+        backgroundColor: Colors.redAccent,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -62,7 +104,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(20),
             alignment: Alignment.center,
             child: StreamBuilder<int>(
-                stream: setup(),
+                stream: getSteps(),
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
                   List<Widget> children;
                   if (snapshot.hasError) {
@@ -110,14 +152,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ];
                         break;
                       case ConnectionState.active:
-                        children = <Widget>[
-                          stepBox(snapshot.data.toString())
-                        ];
+                        children = <Widget>[stepBox(snapshot.data.toString())];
                         break;
                       case ConnectionState.done:
-                        children = <Widget>[
-                          stepBox(snapshot.data.toString())
-                        ];
+                        children = <Widget>[stepBox(snapshot.data.toString())];
                         break;
                     }
                   }
@@ -134,5 +172,3 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 }
-
-
