@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           .doc(uid)
           .update(json);
     } catch (error) {
-      print("Error in updateSteps: $error");
+      rethrow;
     }
   }
 
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     user = UserModel.fromJson(snap.data() as Map<String, dynamic>);
     _startForegroundTask();
     yield user.getTodaySteps();
-    await for (StepCount event in pedometerStream) {
+    await for (StepCount _ in pedometerStream) {
       yield user.getTodaySteps();
     }
   }
