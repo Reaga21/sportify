@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:test/test.dart';
 
 final String jsonStringToday = '''{
+    "lastUpdate": "13:53:23 14.10.2021",
     "steps": {
       "${today()}": {
         "stepsDay": 400,
@@ -18,6 +19,7 @@ final String jsonStringToday = '''{
 }''';
 
 final String jsonStringYesterday = '''{
+    "lastUpdate": "13:53:23 14.10.2021",
     "steps": {
       "${yesterday()}": {
         "stepsDay": 200,
@@ -27,6 +29,7 @@ final String jsonStringYesterday = '''{
 }''';
 
 const String jsonStringFirst = '''{
+    "lastUpdate": "13:53:23 14.10.2021",
     "steps": {
     }
 }''';
