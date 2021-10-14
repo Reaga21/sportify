@@ -6,8 +6,12 @@ part 'user_model.g.dart';
 @JsonSerializable()
 class UserModel {
   Map<String, Map<String, int>> steps;
+  String currentTimestamp;
 
-  UserModel(this.steps);
+  @JsonKey(ignore: true)
+  DateTime? lastStepEvent;
+
+  UserModel(this.steps, this.currentTimestamp);
 
   int getTodaySteps() {
     return steps[dates.today()]?['stepsDay'] ?? 0;
@@ -21,25 +25,37 @@ class UserModel {
   }
 
   /// updates with the new Steps
-  void updateTodaySteps(int stepsFromPedometer) {
-    int newSteps = calcNewSteps(stepsFromPedometer);
-    commitTodaySteps(newSteps, stepsFromPedometer);
+  void updateTodaySteps(int stepsFromPedometer, DateTime timeStamp) {
+    // get last Timestamp from Step Event if null first run
+    DateTime checkpoint =
+        lastStepEvent ?? timeStamp.subtract(const Duration(days: 1));
+    //only update when timestamp is newer
+    if (timeStamp.isAfter(checkpoint)) {
+      currentTimestamp = dates.nowFormated();
+      lastStepEvent = timeStamp;
+      int newSteps = calcNewSteps(stepsFromPedometer);
+      commitTodaySteps(newSteps, stepsFromPedometer);
+    }
   }
 
   /// calcs the new Steps from [stepsFromPedometer]
   int calcNewSteps(int stepsFromPedometer) {
     int savedSteps = getLatestStepsAbs();
     int newSteps = 0;
-    if(savedSteps == 0){
+    if (savedSteps == 0) {
       // first record => zero new steps
       newSteps = 0;
-    }
-    else if (savedSteps <= stepsFromPedometer) {
+    } else if (savedSteps < stepsFromPedometer) {
       newSteps = stepsFromPedometer - savedSteps;
-    } else {
-      // phone did restart and reset the pedometer
-      // newSteps are equal to steps from pedometer
-      newSteps = stepsFromPedometer;
+    } else if (savedSteps > stepsFromPedometer) {
+      // sensor sometimes takes a step back, just continue
+      if (10 < (savedSteps - stepsFromPedometer)) {
+        newSteps = 0;
+      } else {
+        // phone did restart and reset the pedometer
+        // newSteps are equal to steps from pedometer
+        newSteps = stepsFromPedometer;
+      }
     }
     return newSteps;
   }

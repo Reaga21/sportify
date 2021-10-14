@@ -7,15 +7,11 @@ import 'package:sportify/src/views/home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(
-        title: const Text("Firebase Authentication"),
-        backgroundColor: Colors.redAccent,
-      ),
-      body: const MyLogin(),
+  runApp(
+    const MaterialApp(
+      home: MyLogin(),
     ),
-  ));
+  );
 }
 
 class MyLogin extends StatefulWidget {
@@ -41,39 +37,45 @@ class _MyLoginState extends State<MyLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SignInButton(
-          Buttons.Email,
-          onPressed: () {
-            loginWithEmail(_emailInput.text, _passInput.text).then((_) {
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => const HomePage()));
-            });
-          },
-        ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          SizedBox(
-              width: 150,
-              child: TextField(
-                  controller: _emailInput,
-                  decoration: const InputDecoration(hintText: 'Email'))),
-          SizedBox(
-              width: 150,
-              child: TextField(
-                  controller: _passInput,
-                  obscureText: true,
-                  decoration: const InputDecoration(hintText: 'Password'))),
-        ]),
-        Container(child: userInfo()),
-        ElevatedButton(
-            child: const Text('Sign out'),
-            style: ElevatedButton.styleFrom(primary: Colors.red),
-            onPressed: user != null ? () => logout() : null)
-      ],
-    ));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Sportiy"),
+        backgroundColor: Colors.redAccent,
+      ),
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          SignInButton(
+            Buttons.Email,
+            onPressed: () {
+              loginWithEmail(_emailInput.text, _passInput.text).then((_) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomePage()));
+              });
+            },
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            SizedBox(
+                width: 150,
+                child: TextField(
+                    controller: _emailInput,
+                    decoration: const InputDecoration(hintText: 'Email'))),
+            SizedBox(
+                width: 150,
+                child: TextField(
+                    controller: _passInput,
+                    obscureText: true,
+                    decoration: const InputDecoration(hintText: 'Password'))),
+          ]),
+          Container(child: userInfo()),
+          ElevatedButton(
+              child: const Text('Sign out'),
+              style: ElevatedButton.styleFrom(primary: Colors.red),
+              onPressed: user != null ? () => logout() : null)
+        ],
+      )),
+    );
   }
 
   Widget userInfo() {
