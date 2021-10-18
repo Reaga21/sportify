@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    const MaterialApp(
+     MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.lightGreen,
+        backgroundColor: Colors.green,
+
+
+
+      ),
       home: MyLogin(),
     ),
   );
@@ -29,7 +38,7 @@ class _MyLoginState extends State<MyLogin> {
   final _passInput = TextEditingController(text: '123456');
 
   @override
-  void initState() {
+  void initState() {  // raus
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() => this.user = user);
@@ -41,14 +50,15 @@ class _MyLoginState extends State<MyLogin> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportiy"),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Theme.of(context).backgroundColor,
       ),
       body: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SignInButton(
-            Buttons.Email,
+          ElevatedButton(
+            child: const Text('Sign in with Email'),
+            style: ElevatedButton.styleFrom(primary: Theme.of(context).backgroundColor),
             onPressed: () {
               loginWithEmail(_emailInput.text, _passInput.text).then((_) {
                 Navigator.pushReplacement(context,
@@ -62,6 +72,8 @@ class _MyLoginState extends State<MyLogin> {
                 child: TextField(
                     controller: _emailInput,
                     decoration: const InputDecoration(hintText: 'Email'))),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             SizedBox(
                 width: 150,
                 child: TextField(
@@ -72,14 +84,14 @@ class _MyLoginState extends State<MyLogin> {
           Container(child: userInfo()),
           ElevatedButton(
               child: const Text('Sign out'),
-              style: ElevatedButton.styleFrom(primary: Colors.red),
+              style: ElevatedButton.styleFrom(primary: Theme.of(context).backgroundColor),
               onPressed: user != null ? () => logout() : null)
         ],
       )),
     );
   }
 
-  Widget userInfo() {
+  Widget userInfo() {  // vollständig raus
     if (user == null) return const Text('Not signed in.');
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       Text(
@@ -92,5 +104,5 @@ class _MyLoginState extends State<MyLogin> {
         .signInWithEmailAndPassword(email: email, password: pass);
   }
 
-  logout() => FirebaseAuth.instance.signOut();
+  logout() => FirebaseAuth.instance.signOut(); // raus
 }
