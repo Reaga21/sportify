@@ -39,14 +39,18 @@ dependencies:
   firebase_auth: ^1.2.0 # firebase auth
   flutter_signin_button: ^2.0.0 # firebase auth
   google_sign_in: ^5.0.4 # firebase auth
+  pedometer: ^3.0.0
+  jiffy: ^4.1.0
+  flutter_foreground_task: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  build_runner: 2.1.4
+  json_serializable: 5.0.2
+  test: 1.18.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
