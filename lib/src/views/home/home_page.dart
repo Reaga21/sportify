@@ -8,7 +8,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/main.dart';
-import 'package:sportify/src/shared_widgets/step_box.dart';
+import 'package:sportify/src/views/home/step_box.dart';
 
 const updateStepsTask = "updateStepsTask";
 

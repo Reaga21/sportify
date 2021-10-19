@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:sportify/src/views/home_page.dart';
+import 'package:sportify/src/views/home/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
