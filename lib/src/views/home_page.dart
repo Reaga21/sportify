@@ -6,7 +6,7 @@ import 'package:pedometer/pedometer.dart';
 import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
-import 'package:sportify/src/models/user_model.dart';
+import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/main.dart';
 import 'package:sportify/src/shared_widgets/step_box.dart';
 
@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  late UserModel user;
+  late StepModel user;
   ReceivePort? _receivePort;
 
   void _startForegroundTask() async {
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Stream<int> _getSteps() async* {
     DocumentSnapshot snap =
         await FirebaseFirestore.instance.collection('steps').doc(uid).get();
-    user = UserModel.fromJson(snap.data() as Map<String, dynamic>);
+    user = StepModel.fromJson(snap.data() as Map<String, dynamic>);
     _startForegroundTask();
     yield user.getTodaySteps();
     await for (int steps in Stream.periodic(
