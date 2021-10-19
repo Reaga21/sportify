@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     _receivePort?.listen((event) async {
-      user.updateTodaySteps(event.steps, event.timeStamp);
+      user.updateTodaySteps(event.steps);
       await _updateSteps();
     });
   }
@@ -56,8 +56,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     user = UserModel.fromJson(snap.data() as Map<String, dynamic>);
     _startForegroundTask();
     yield user.getTodaySteps();
-    await for (StepCount _ in pedometerStream) {
-      yield user.getTodaySteps();
+    await for (int steps in Stream.periodic(
+        const Duration(seconds: 10), (_) => user.getTodaySteps())) {
+      yield steps;
     }
   }
 
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000 * 10, //every 10th secpr
+        interval: 1000 * 60 * 5, //every 5 min
         autoRunOnBoot: true,
       ),
       printDevLog: true,

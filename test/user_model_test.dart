@@ -62,17 +62,17 @@ void main() {
   });
 
   test("Go through full update routine", () {
-    userToday.updateTodaySteps(2000, DateTime.now());
-    userYesterday.updateTodaySteps(2000, DateTime.now());
-    userZero.updateTodaySteps(2000, DateTime.now());
+    userToday.updateTodaySteps(2000);
+    userYesterday.updateTodaySteps(2000);
+    userZero.updateTodaySteps(2000);
 
     assert(userZero.getTodaySteps() == 0);
     assert(userToday.getTodaySteps() == 1000);
     assert(userYesterday.getTodaySteps() == 1000);
 
-    userToday.updateTodaySteps(3000, DateTime.now());
-    userYesterday.updateTodaySteps(3000, DateTime.now());
-    userZero.updateTodaySteps(3000, DateTime.now());
+    userToday.updateTodaySteps(3000);
+    userYesterday.updateTodaySteps(3000);
+    userZero.updateTodaySteps(3000);
 
     assert(userZero.getTodaySteps() == 1000);
     assert(userToday.getTodaySteps() == 2000);
