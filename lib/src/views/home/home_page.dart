@@ -33,8 +33,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     _receivePort?.listen((event) async {
+      int oldStep = user.getTodaySteps();
       user.updateTodaySteps(event.steps);
-      await _updateSteps();
+      if ((user.getTodaySteps() - oldStep) > 50) {
+        await _updateSteps();
+      }
     });
   }
 
@@ -89,7 +92,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000 * 60 * 5, //every 5 min
+        interval: 1000 * 30, //every 5 min
         autoRunOnBoot: true,
       ),
       printDevLog: true,
@@ -100,6 +103,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
+      await _updateSteps();
+    }
+    else if(state == AppLifecycleState.resumed) {
       await _updateSteps();
     }
   }
@@ -220,13 +226,16 @@ class FirstTaskHandler implements TaskHandler {
   final pedometer = Pedometer.stepCountStream;
 
   @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {}
+  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+    pedometer.listen((event) {
+      FlutterForegroundTask.updateService(notificationText: '$event');
+      sendPort?.send(event);
+    }).onError((error) =>
+        FlutterForegroundTask.updateService(notificationText: '$error'));
+  }
 
   @override
-  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
-    final StepCount event = await pedometer.first;
-    sendPort?.send(event);
-  }
+  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {}
 
   @override
   Future<void> onDestroy(DateTime timestamp) async {}
