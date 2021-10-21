@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _receivePort?.listen((event) async {
       int oldStep = user.getTodaySteps();
       user.updateTodaySteps(event.steps);
+      // only update after 50 new steps counted
       if ((user.getTodaySteps() - oldStep) > 50) {
         await _updateSteps();
       }
@@ -104,8 +105,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
       await _updateSteps();
-    }
-    else if(state == AppLifecycleState.resumed) {
+    } else if (state == AppLifecycleState.resumed) {
       await _updateSteps();
     }
   }
