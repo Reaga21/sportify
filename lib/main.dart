@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:sportify/src/views/home_page.dart';
 
@@ -9,19 +10,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-     MaterialApp(
+    MaterialApp(
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.lightGreen,
         backgroundColor: Colors.green,
-
-
-
       ),
       home: MyLogin(),
     ),
   );
-
 }
 
 class MyLogin extends StatefulWidget {
@@ -38,7 +35,8 @@ class _MyLoginState extends State<MyLogin> {
   final _passInput = TextEditingController(text: '123456');
 
   @override
-  void initState() {  // raus
+  void initState() {
+    // raus
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() => this.user = user);
@@ -49,60 +47,68 @@ class _MyLoginState extends State<MyLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sportiy"),
+        title: const Text("Sportify"),
         backgroundColor: Theme.of(context).backgroundColor,
       ),
       body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton(
-            child: const Text('Sign in with Email'),
-            style: ElevatedButton.styleFrom(primary: Theme.of(context).backgroundColor),
-            onPressed: () {
-              loginWithEmail(_emailInput.text, _passInput.text).then((_) {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const HomePage()));
-              });
-            },
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.lightGreen,
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: 50),
             SizedBox(
-                width: 150,
-                child: TextField(
-                    controller: _emailInput,
-                    decoration: const InputDecoration(hintText: 'Email'))),
-          ]),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              width: 150,
+              child: TextField(
+                controller: _emailInput,
+                decoration: const InputDecoration(hintText: 'Email'),
+              ),
+            ),
             SizedBox(
-                width: 150,
-                child: TextField(
-                    controller: _passInput,
-                    obscureText: true,
-                    decoration: const InputDecoration(hintText: 'Password'))),
-          ]),
-          Container(child: userInfo()),
-          ElevatedButton(
-              child: const Text('Sign out'),
-              style: ElevatedButton.styleFrom(primary: Theme.of(context).backgroundColor),
-              onPressed: user != null ? () => logout() : null)
-        ],
-      )),
+              height: 25,
+            ),
+            SizedBox(
+              width: 150,
+              child: TextField(
+                controller: _passInput,
+                obscureText: true,
+                decoration: const InputDecoration(hintText: 'Password'),
+              ),
+            ),
+            SizedBox(
+              height: 50,
+            ),
+            ElevatedButton(
+              child: const Text('Sign in with Email'),
+              style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).backgroundColor),
+              onPressed: () {
+                loginWithEmail(_emailInput.text, _passInput.text).then(
+                  (_) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const HomePage()));
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
-  }
-
-  Widget userInfo() {  // vollständig raus
-    if (user == null) return const Text('Not signed in.');
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      Text(
-          'Signed in as ${user!.displayName != null ? user!.displayName! + ', ' : ''}${user!.email}.')
-    ]);
   }
 
   Future<UserCredential> loginWithEmail(String email, String pass) {
     return FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: pass);
   }
-
-  logout() => FirebaseAuth.instance.signOut(); // raus
 }
