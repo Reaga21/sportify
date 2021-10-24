@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget stepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
+Widget createStepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
       width: 500,
       height: 200,
       child: Stack(

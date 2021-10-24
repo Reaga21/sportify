@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sportify/src/util/dates.dart' as dates;
 
 part 'step_model.g.dart';
 
 @JsonSerializable()
-class StepModel {
+class StepModel extends ChangeNotifier {
   Map<String, Map<String, int>> steps;
   String lastUpdate;
 
@@ -26,6 +27,7 @@ class StepModel {
     lastUpdate = dates.nowFormated();
     int newSteps = calcNewSteps(stepsFromPedometer);
     commitTodaySteps(newSteps, stepsFromPedometer);
+    notifyListeners();
   }
 
   /// calcs the new Steps from [stepsFromPedometer]
@@ -63,6 +65,13 @@ class StepModel {
         'stepsDay': newSteps,
         'stepsAbs': totalSteps,
       };
+    }
+  }
+
+  setStepModel(StepModel? newModel) {
+    if (newModel != null) {
+      steps = newModel.steps;
+      lastUpdate = newModel.lastUpdate;
     }
   }
 

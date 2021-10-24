@@ -1,14 +1,16 @@
-import 'dart:async';
+import 'dart:isolate';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pedometer/pedometer.dart';
-import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-
-import 'package:sportify/src/models/step_model.dart';
+import 'package:pedometer/pedometer.dart';
+import 'package:provider/provider.dart';
 import 'package:sportify/main.dart';
-import 'package:sportify/src/views/home/step_box.dart';
+import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
+import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
+import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
 
 const updateStepsTask = "updateStepsTask";
 
@@ -19,11 +21,12 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage> {
   final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
-  String uid = FirebaseAuth.instance.currentUser!.uid;
-  late StepModel user;
   ReceivePort? _receivePort;
+  int _counter = 0;
+  int _selectedIndex = 0;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   void _startForegroundTask() async {
     _receivePort = await FlutterForegroundTask.startService(
@@ -33,17 +36,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     _receivePort?.listen((event) async {
-      int oldStep = user.getTodaySteps();
-      user.updateTodaySteps(event.steps);
+      context.read<StepModel>().updateTodaySteps(event.steps);
       // only update after 50 new steps counted
-      if ((user.getTodaySteps() - oldStep) > 50) {
-        await _updateSteps();
+      if (_counter > 50) {
+        await _updateSteps(context);
+        _counter = 0;
       }
+      _counter++;
     });
   }
 
-  Future<void> _updateSteps() async {
-    Map<String, dynamic> json = user.toJson();
+  Future<void> _updateSteps(BuildContext context) async {
+    Map<String, dynamic> json = context.read<StepModel>().toJson();
     try {
       await FirebaseFirestore.instance
           .collection('steps')
@@ -54,23 +58,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  Stream<int> _getSteps() async* {
-    DocumentSnapshot snap =
-        await FirebaseFirestore.instance.collection('steps').doc(uid).get();
-    user = StepModel.fromJson(snap.data() as Map<String, dynamic>);
-    _startForegroundTask();
-    yield user.getTodaySteps();
-    await for (int steps in Stream.periodic(
-        const Duration(seconds: 10), (_) => user.getTodaySteps())) {
-      yield steps;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
     _initForegroundTask();
+    _startForegroundTask();
   }
 
   void _initForegroundTask() {
@@ -93,7 +85,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000 * 30, //every 5 min
+        interval: 1000 * 30, //every 30 sec
         autoRunOnBoot: true,
       ),
       printDevLog: true,
@@ -101,13 +93,55 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
-      await _updateSteps();
-    } else if (state == AppLifecycleState.resumed) {
-      await _updateSteps();
-    }
+  Widget build(BuildContext context) {
+    return WithForegroundTask(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Sportify"),
+          backgroundColor: Colors.redAccent,
+          actions: [
+            IconButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut().then((_) =>
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const MyLogin())));
+              },
+              icon: const Icon(Icons.logout),
+            )
+          ],
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(20),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _pages[_selectedIndex],
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (int index) => setState(() {
+            _selectedIndex = index;
+          }),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.run_circle),
+              label: 'Steps',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people),
+              label: 'Friends',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: 'Statistics',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -116,110 +150,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: WithForegroundTask(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Sportify"),
-            backgroundColor: Colors.redAccent,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  FirebaseAuth.instance.signOut().then((_) =>
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const MyLogin())));
-                },
-                icon: const Icon(Icons.logout),
-              )
-            ],
-          ),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                alignment: Alignment.center,
-                child: StreamBuilder<int>(
-                    stream: _getSteps(),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<int> snapshot) {
-                      List<Widget> children;
-                      if (snapshot.hasError) {
-                        children = <Widget>[
-                          const Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 60,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Text('Error: ${snapshot.error}'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text('Stack trace: ${snapshot.stackTrace}'),
-                          ),
-                        ];
-                      } else {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.none:
-                            children = const <Widget>[
-                              Icon(
-                                Icons.info,
-                                color: Colors.blue,
-                                size: 60,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 16),
-                                child: Text('Select a lot'),
-                              )
-                            ];
-                            break;
-                          case ConnectionState.waiting:
-                            children = const <Widget>[
-                              SizedBox(
-                                child: CircularProgressIndicator(),
-                                width: 60,
-                                height: 60,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 16),
-                                child: Text('Awaiting bids...'),
-                              )
-                            ];
-                            break;
-                          case ConnectionState.active:
-                            children = <Widget>[
-                              stepBox(snapshot.data.toString())
-                            ];
-                            break;
-                          case ConnectionState.done:
-                            children = <Widget>[
-                              stepBox(snapshot.data.toString())
-                            ];
-                            break;
-                        }
-                      }
-
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: children,
-                      );
-                    }),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void startCallback() {
-  FlutterForegroundTask.setTaskHandler(FirstTaskHandler());
+  static const List<Widget> _pages = <Widget>[
+    StepOverviewPage(),
+    FriendsPage(),
+    StatisticPage(),
+  ];
 }
 
 class FirstTaskHandler implements TaskHandler {
@@ -239,4 +174,8 @@ class FirstTaskHandler implements TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp) async {}
+}
+
+void startCallback() {
+  FlutterForegroundTask.setTaskHandler(FirstTaskHandler());
 }
