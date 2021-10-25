@@ -1,4 +1,4 @@
-import 'package:sportify/src/models/user_model.dart';
+import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/util/dates.dart';
 import 'dart:convert';
 
@@ -39,9 +39,9 @@ final Map<String, dynamic> jsonYesterday = jsonDecode(jsonStringYesterday);
 final Map<String, dynamic> jsonZero = jsonDecode(jsonStringFirst);
 
 void main() {
-  UserModel userToday = UserModel.fromJson(jsonToday);
-  UserModel userYesterday = UserModel.fromJson(jsonYesterday);
-  UserModel userZero = UserModel.fromJson(jsonZero);
+  StepModel userToday = StepModel.fromJson(jsonToday);
+  StepModel userYesterday = StepModel.fromJson(jsonYesterday);
+  StepModel userZero = StepModel.fromJson(jsonZero);
 
   test("Get the latest amount of absolute Steps", () {
     assert(userToday.getLatestStepsAbs() == 1400);
@@ -62,17 +62,17 @@ void main() {
   });
 
   test("Go through full update routine", () {
-    userToday.updateTodaySteps(2000, DateTime.now());
-    userYesterday.updateTodaySteps(2000, DateTime.now());
-    userZero.updateTodaySteps(2000, DateTime.now());
+    userToday.updateTodaySteps(2000);
+    userYesterday.updateTodaySteps(2000);
+    userZero.updateTodaySteps(2000);
 
     assert(userZero.getTodaySteps() == 0);
     assert(userToday.getTodaySteps() == 1000);
     assert(userYesterday.getTodaySteps() == 1000);
 
-    userToday.updateTodaySteps(3000, DateTime.now());
-    userYesterday.updateTodaySteps(3000, DateTime.now());
-    userZero.updateTodaySteps(3000, DateTime.now());
+    userToday.updateTodaySteps(3000);
+    userYesterday.updateTodaySteps(3000);
+    userZero.updateTodaySteps(3000);
 
     assert(userZero.getTodaySteps() == 1000);
     assert(userToday.getTodaySteps() == 2000);

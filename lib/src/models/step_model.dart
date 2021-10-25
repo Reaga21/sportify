@@ -1,17 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sportify/src/util/dates.dart' as dates;
 
-part 'user_model.g.dart';
+part 'step_model.g.dart';
 
 @JsonSerializable()
-class UserModel {
+class StepModel extends ChangeNotifier {
   Map<String, Map<String, int>> steps;
-  String currentTimestamp;
+  String lastUpdate;
 
-  @JsonKey(ignore: true)
-  DateTime? lastStepEvent;
-
-  UserModel(this.steps, this.currentTimestamp);
+  StepModel(this.steps, this.lastUpdate);
 
   int getTodaySteps() {
     return steps[dates.today()]?['stepsDay'] ?? 0;
@@ -25,17 +23,11 @@ class UserModel {
   }
 
   /// updates with the new Steps
-  void updateTodaySteps(int stepsFromPedometer, DateTime timeStamp) {
-    // get last Timestamp from Step Event if null first run
-    DateTime checkpoint =
-        lastStepEvent ?? timeStamp.subtract(const Duration(days: 1));
-    //only update when timestamp is newer
-    if (timeStamp.isAfter(checkpoint)) {
-      currentTimestamp = dates.nowFormated();
-      lastStepEvent = timeStamp;
-      int newSteps = calcNewSteps(stepsFromPedometer);
-      commitTodaySteps(newSteps, stepsFromPedometer);
-    }
+  void updateTodaySteps(int stepsFromPedometer) {
+    lastUpdate = dates.nowFormated();
+    int newSteps = calcNewSteps(stepsFromPedometer);
+    commitTodaySteps(newSteps, stepsFromPedometer);
+    notifyListeners();
   }
 
   /// calcs the new Steps from [stepsFromPedometer]
@@ -76,8 +68,15 @@ class UserModel {
     }
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  setStepModel(StepModel? newModel) {
+    if (newModel != null) {
+      steps = newModel.steps;
+      lastUpdate = newModel.lastUpdate;
+    }
+  }
 
-  Map<String, dynamic> toJson() => _$UserModelToJson(this);
+  factory StepModel.fromJson(Map<String, dynamic> json) =>
+      _$StepModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StepModelToJson(this);
 }
