@@ -8,6 +8,10 @@ class StepOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return createStepBox(context.watch<StepModel>().getTodaySteps().toString());
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      child:
+          createStepBox(context.watch<StepModel>().getTodaySteps().toString()),
+    );
   }
 }

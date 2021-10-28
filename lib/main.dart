@@ -41,14 +41,6 @@ class _MyLoginState extends State<MyLogin> {
   final _passInput = TextEditingController(text: '123456');
 
   @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      setState(() => this.user = user);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

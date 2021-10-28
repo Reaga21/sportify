@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,27 +24,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
+  late StreamSubscription<User?> _authListener;
   ReceivePort? _receivePort;
   int _counter = 0;
   int _selectedIndex = 0;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   void _startForegroundTask() async {
-    _receivePort = await FlutterForegroundTask.startService(
-      notificationTitle: 'Sportify',
-      notificationText: 'Counting  steps...',
-      callback: startCallback,
-    );
+    //only start Service if not already running
+    if (!await FlutterForegroundTask.isRunningService) {
+      _receivePort = await FlutterForegroundTask.startService(
+        notificationTitle: 'Sportify',
+        notificationText: 'Counting  steps...',
+        callback: startCallback,
+      );
 
-    _receivePort?.listen((event) async {
-      context.read<StepModel>().updateTodaySteps(event.steps);
-      // only update after 50 new steps counted
-      if (_counter > 50) {
-        await _updateSteps(context);
-        _counter = 0;
-      }
-      _counter++;
-    });
+      _receivePort?.listen((event) async {
+        context.read<StepModel>().updateTodaySteps(event.steps);
+        // only update after 50 new steps counted
+        if (_counter > 50) {
+          await _updateSteps(context);
+          _counter = 0;
+        }
+        _counter++;
+      });
+    }
   }
 
   Future<void> _updateSteps(BuildContext context) async {
@@ -63,6 +68,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _initForegroundTask();
     _startForegroundTask();
+    _authListener =
+        FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        FlutterForegroundTask.stopService().then((_) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const MyLogin()));
+        });
+      }
+    });
   }
 
   void _initForegroundTask() {
@@ -102,23 +116,15 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               onPressed: () {
-                FirebaseAuth.instance.signOut().then((_) =>
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const MyLogin())));
+                FirebaseAuth.instance.signOut();
               },
               icon: const Icon(Icons.logout),
             )
           ],
         ),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _pages[_selectedIndex],
-            ],
-          ),
+        body: IndexedStack(
+          children: _pages,
+          index: _selectedIndex,
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
@@ -147,6 +153,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _receivePort?.close();
+    _authListener.cancel();
+
     super.dispose();
   }
 
