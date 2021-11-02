@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sportify/src/views/home/tabs/friends/tabs/invites_pages.dart';
+import 'package:sportify/src/views/home/tabs/friends/tabs/search_page.dart';
 
 class FriendsPage extends StatelessWidget {
   const FriendsPage({Key? key}) : super(key: key);
@@ -39,29 +41,11 @@ class FriendsTabView extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            IncomingPage(),
-            OutgoingPage(),
+            SearchPage(),
+            InvitesPage(),
           ],
         ),
       ),
     );
-  }
-}
-
-class OutgoingPage extends StatelessWidget {
-  const OutgoingPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class IncomingPage extends StatelessWidget {
-  const IncomingPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
