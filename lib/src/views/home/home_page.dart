@@ -110,18 +110,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return WithForegroundTask(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Sportify"),
-          backgroundColor: Colors.redAccent,
-          actions: [
-            IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              icon: const Icon(Icons.logout),
-            )
-          ],
-        ),
         body: IndexedStack(
           children: _pages,
           index: _selectedIndex,
