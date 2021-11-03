@@ -11,7 +11,10 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
   List<QueryDocumentSnapshot> friendsSuggestions = [];
+  var statusIcon = Icons.add_circle;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +39,16 @@ class _SearchPageState extends State<SearchPage> {
                     margin: const EdgeInsets.only(left: 10),
                     child: TextField(
                       onChanged: (text) async {
-                        FirebaseFirestore.instance
-                            .collection('users')
+                        users
                             .where("name", isGreaterThanOrEqualTo: text)
                             .where("name", isLessThanOrEqualTo: "$text\uf7ff")
                             .get()
                             .then((query) {
                           friendsSuggestions = [];
                           if (text.isNotEmpty) {
-                            friendsSuggestions = query.docs;
-                            print(friendsSuggestions);
+                            friendsSuggestions = query.docs
+                                .where((doc) => doc.id != uid)
+                                .toList();
                           }
                           setState(() {});
                         });
@@ -65,28 +68,34 @@ class _SearchPageState extends State<SearchPage> {
           flex: 6,
           child: ListView(
             children: friendsSuggestions
-                .map((doc) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            MemoryImage(base64Decode(doc.get("pic"))),
-                      ),
-                      title: Text(doc.get("name")),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.add_circle,
-                          color: Colors.green,
-                        ),
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(doc.id)
-                              .update({
-                            'pendingFriends': FieldValue.arrayUnion(
-                                [FirebaseAuth.instance.currentUser!.uid])
-                          });
-                        },
-                      ),
-                    ))
+                .map(
+                  (doc) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          MemoryImage(base64Decode(doc.get("pic"))),
+                    ),
+                    title: Text(doc.get("name")),
+                    trailing: StatefulBuilder(
+                      builder: (BuildContext context, StateSetter stateSetter) {
+                        return IconButton(
+                          icon: Icon(
+                            statusIcon,
+                            color: Colors.green,
+                          ),
+                          onPressed: () {
+                            users.doc(doc.id).update({
+                              'pendingFriends': FieldValue.arrayUnion([uid])
+                            });
+                            users.doc(uid).update({
+                              'pendingInv': FieldValue.arrayUnion([doc.id])
+                            });
+                            stateSetter(() => statusIcon = Icons.check_circle);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         )
