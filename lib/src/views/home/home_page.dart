@@ -1,5 +1,4 @@
 import 'dart:isolate';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
+import 'package:sportify/src/views/login_page.dart';
 
 const updateStepsTask = "updateStepsTask";
 
