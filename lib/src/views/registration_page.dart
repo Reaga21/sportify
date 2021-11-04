@@ -1,7 +1,9 @@
 import 'dart:ui';
-
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/views/home/home_page.dart';
+import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/login_page.dart';
 
 class Registration extends StatefulWidget {
@@ -28,130 +30,124 @@ class _RegistrationState extends State<Registration> {
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(8),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Text(
-                      "Registrierung",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Leg einen Account an",
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Text(
+                    "Registrierung",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 30,
                       color: Theme.of(context).primaryColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width/1.5,
-                      height: 50.0,
-                      child: TextField(
-                        controller: bNController,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-
-                            hintText: 'Benutzername'),
-                      ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Leg einen Account an",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 8.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50.0,
+                    child: TextField(
+                      controller: bNController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Benutzername'),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width/1.5,
-                      height: 50.0,
-                      child: TextFormField(validator: (value) {
-                        if(value!.isEmpty){
-                          return 'Bitte gib eine gültige Email-Adresse ein.';
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50.0,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (!(EmailValidator.validate(value!))) {
+                          return "Bitte gib eine gültige Email-Adresse ein.";
                         }
                         return null;
-
-                      } ,
-                        controller: eMailController,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Email Adresse'),
-                      ),
+                      },
+                      controller: eMailController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Email Adresse'),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width/1.5,
-                      height: 50.0,
-                      child: TextField(
-                        controller: pWController,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Passwort'),
-                      ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50.0,
+                    child: TextFormField(
+                      controller: pWController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'Passwort'),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width/1.5,
-                      height: 50.0,
-                      child: TextFormField(
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50.0,
+                    child: TextFormField(
+                        obscureText: true,
                         decoration: const InputDecoration(
-                          errorMaxLines: 3,
+                            errorMaxLines: 3,
                             border: OutlineInputBorder(),
-                            hintText: 'Passwort bestätigen'
-                        ),
-                        validator: (value){
-                          if(pWController.text != value)
-                            {return "Die beiden Passwörter sind ungleich";
-                            }
+                            hintText: 'Passwort bestätigen'),
+                        validator: (value) {
+                          if (pWController.text != value) {
+                            return "Die beiden Passwörter sind ungleich";
+                          }
                           return null;
-                        }
-                      ),
-                    ),
+                        }),
                   ),
-                ],
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
                   height: 50,
                 ),
                 ElevatedButton(
@@ -159,21 +155,31 @@ class _RegistrationState extends State<Registration> {
                   style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).backgroundColor),
                   onPressed: () {
-                   if (_formKey.currentState!.validate()) {
-
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => const HomePage()));
-                      }
-                   },
-                    ),
-                ],
-              ),
-            ],
-
+                    if (_formKey.currentState!.validate()) {
+                      FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                              email: eMailController.text,
+                              password: pWController.text)
+                          .then((_) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoadingPage()));
+                      }).catchError((error) {
+                        if (error.code == 'weak-password') {
+                          print('The password provided is too weak.');
+                        } else if (error.code == 'email-already-in-use') {
+                          print('The account already exists for that email.');
+                        }
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
-
-

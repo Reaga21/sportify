@@ -42,7 +42,7 @@ class _MyLoginState extends State<MyLogin> {
             ),
             const SizedBox(height: 50),
             SizedBox(
-              width: 150,
+              width: 250,
               child: TextField(
                 controller: _emailInput,
                 decoration: const InputDecoration(hintText: 'Email'),
@@ -52,7 +52,7 @@ class _MyLoginState extends State<MyLogin> {
               height: 25,
             ),
             SizedBox(
-              width: 150,
+              width: 250,
               child: TextField(
                 controller: _passInput,
                 obscureText: true,
