@@ -151,7 +151,7 @@ class _RegistrationState extends State<Registration> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(
-                  height: 50,
+                  height: 80,
                 ),
                 ElevatedButton(
                   child: const Text('Registrieren'),
@@ -176,6 +176,23 @@ class _RegistrationState extends State<Registration> {
                         }
                       });
                     }
+                  },
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                ElevatedButton(
+                  child: const Text('Account bereits vorhanden'),
+                  style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).backgroundColor),
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const MyLogin()));
                   },
                 ),
               ],

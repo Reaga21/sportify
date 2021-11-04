@@ -82,6 +82,9 @@ class _MyLoginState extends State<MyLogin> {
           );
         },
       ),
+      const SizedBox(
+        height: 20,
+      ),
       ElevatedButton(
         child: const Text('Account anlegen'),
         style: ElevatedButton.styleFrom(
