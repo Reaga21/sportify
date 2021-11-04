@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sportify/src/views/home/home_page.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);
@@ -18,6 +19,8 @@ class _RegistrationState extends State<Registration> {
   final TextEditingController bNController = TextEditingController();
   final TextEditingController eMailController = TextEditingController();
   final TextEditingController pWController = TextEditingController();
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
