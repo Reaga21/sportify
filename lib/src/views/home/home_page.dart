@@ -7,6 +7,7 @@ import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
 import 'package:sportify/main.dart';
 import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/util/dates.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
@@ -117,6 +118,24 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               _pages[_selectedIndex],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  ElevatedButton(
+                    child: const Text('Test fuer Firstore'),
+                    style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).backgroundColor),
+                    onPressed: () {
+                      DocumentReference register = FirebaseFirestore.instance.collection('steps').doc(uid); // Verbindung zur Firebase Collection steps
+                      register.set(StepModel({}, today()).toJson());
+
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
         ),

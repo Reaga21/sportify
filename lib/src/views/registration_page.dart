@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/util/dates.dart';
 import 'package:sportify/src/views/home/home_page.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/login_page.dart';
@@ -163,7 +165,9 @@ class _RegistrationState extends State<Registration> {
                           .createUserWithEmailAndPassword(
                               email: eMailController.text,
                               password: pWController.text)
-                          .then((_) {
+                          .then((user) {
+                        DocumentReference register = FirebaseFirestore.instance.collection('steps').doc(user.user!.uid); // Verbindung zur Firebase Collection steps
+                        register.set(StepModel({}, today()).toJson());
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -175,6 +179,7 @@ class _RegistrationState extends State<Registration> {
                           print('The account already exists for that email.');
                         }
                       });
+
                     }
                   },
                 ),
@@ -197,6 +202,7 @@ class _RegistrationState extends State<Registration> {
                 ),
               ],
             ),
+
           ],
         ),
       ),
