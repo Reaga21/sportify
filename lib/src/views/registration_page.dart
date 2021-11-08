@@ -166,8 +166,11 @@ class _RegistrationState extends State<Registration> {
                               email: eMailController.text,
                               password: pWController.text)
                           .then((user) {
-                        DocumentReference register = FirebaseFirestore.instance.collection('steps').doc(user.user!.uid); // Verbindung zur Firebase Collection steps
-                        register.set(StepModel({}, today()).toJson());
+                        DocumentReference stepsDocument = FirebaseFirestore.instance.collection('steps').doc(user.user!.uid); // Verbindung zur Firebase Collection steps
+                        stepsDocument.set(StepModel({}, today()).toJson());
+                        DocumentReference userDocument = FirebaseFirestore.instance.collection('user').doc(user.user!.uid);
+
+
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
