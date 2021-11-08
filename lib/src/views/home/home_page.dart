@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Sportify"),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Theme.of(context).backgroundColor,
           actions: [
             IconButton(
               onPressed: () {
@@ -118,24 +118,6 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               _pages[_selectedIndex],
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  ElevatedButton(
-                    child: const Text('Test fuer Firstore'),
-                    style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).backgroundColor),
-                    onPressed: () {
-                      DocumentReference register = FirebaseFirestore.instance.collection('steps').doc(uid); // Verbindung zur Firebase Collection steps
-                      register.set(StepModel({}, today()).toJson());
-
-                    },
-                  ),
-                ],
-              ),
             ],
           ),
         ),

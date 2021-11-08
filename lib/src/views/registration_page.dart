@@ -166,10 +166,24 @@ class _RegistrationState extends State<Registration> {
                               email: eMailController.text,
                               password: pWController.text)
                           .then((user) {
-                        DocumentReference stepsDocument = FirebaseFirestore.instance.collection('steps').doc(user.user!.uid); // Verbindung zur Firebase Collection steps
+                        DocumentReference stepsDocument = FirebaseFirestore
+                            .instance
+                            .collection('steps')
+                            .doc(user.user!
+                                .uid); // Verbindung zur Firebase Collection steps
                         stepsDocument.set(StepModel({}, today()).toJson());
-                        DocumentReference userDocument = FirebaseFirestore.instance.collection('user').doc(user.user!.uid);
-
+                        DocumentReference userDocument = FirebaseFirestore
+                            .instance
+                            .collection('users')
+                            .doc(user.user!.uid);
+                        Map<String, dynamic> userModel = {
+                          'friends': [],
+                          'name': bNController.text,
+                          'pendingInv': [],
+                          'pendingReq': [],
+                          'pic': ''
+                        };
+                        userDocument.set(userModel);
 
                         Navigator.pushReplacement(
                             context,
@@ -182,7 +196,6 @@ class _RegistrationState extends State<Registration> {
                           print('The account already exists for that email.');
                         }
                       });
-
                     }
                   },
                 ),
@@ -205,7 +218,6 @@ class _RegistrationState extends State<Registration> {
                 ),
               ],
             ),
-
           ],
         ),
       ),
