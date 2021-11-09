@@ -72,21 +72,28 @@ class _MyLoginState extends State<MyLogin> {
                 .of(context)
                 .backgroundColor),
         onPressed: () {
-          loginWithEmail(_emailInput.text, _passInput.text).then(
+          FirebaseAuth.instance
+              .signInWithEmailAndPassword(email: _emailInput.text, password: _passInput.text).then(
                 (_) {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (_) => const HomePage()));
             },
-          );
+          ).catchError((error) {
+            if(error.code == 'user-not-found'){
+              print('Es konnte kein Nutzer mit der angegebenen Email gefunden werden.');
+            }else if(error.code == 'wrong-password'){
+              print('Das eingegebene Passwort ist falsch.');
+            }
+          });
         },
       ),
       const SizedBox(
         height: 20,
       ),
       ElevatedButton(
-        child: const Text('Account anlegen'),
+        child: const Text('Create an Account'),
         style: ElevatedButton.styleFrom(
             primary: Theme
                 .of(context)
