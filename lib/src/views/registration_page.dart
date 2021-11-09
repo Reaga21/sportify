@@ -190,10 +190,12 @@ class _RegistrationState extends State<Registration> {
                             MaterialPageRoute(
                                 builder: (_) => const LoadingPage()));
                       }).catchError((error) {
-                        if (error.code == 'weak-password') {
-                          print('The password provided is too weak.');
-                        } else if (error.code == 'email-already-in-use') {
+                        if (error.code == 'email-already-in-use') {
                           print('The account already exists for that email.');
+                          _showDialogEmailIU();
+                        } else if (error.code == 'weak-password') {
+                          print('The password provided is too weak.');
+                          _showDialogWeakPW();
                         }
                       });
                     }
@@ -221,6 +223,68 @@ class _RegistrationState extends State<Registration> {
           ],
         ),
       ),
+    );
+  }
+  Future<void> _showDialogWeakPW() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Passwort zu schwach!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Das eingegebene Passwort ist zu schwach!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Zurück zur Registrierung'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Future<void> _showDialogEmailIU() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Account bereits vorhanden!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Es gibt bereits einen Account mit dieser Email Adresse!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Zur Registrierung'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Zum Login'),
+
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MyLogin()));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
