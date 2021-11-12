@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/util/dates.dart';
-import 'package:sportify/src/views/home/home_page.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -118,7 +117,7 @@ class _RegistrationState extends State<Registration> {
                     child: TextFormField(
                       controller: pWController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), hintText: 'Passwort'),
                     ),
                   ),
@@ -191,10 +190,8 @@ class _RegistrationState extends State<Registration> {
                                 builder: (_) => const LoadingPage()));
                       }).catchError((error) {
                         if (error.code == 'email-already-in-use') {
-                          print('The account already exists for that email.');
                           _showDialogEmailIU();
                         } else if (error.code == 'weak-password') {
-                          print('The password provided is too weak.');
                           _showDialogWeakPW();
                         }
                       });

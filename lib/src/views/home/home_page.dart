@@ -1,17 +1,13 @@
 import 'dart:async';
 import 'dart:isolate';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
-
-import 'package:sportify/main.dart';
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/models/user_model.dart';
-import 'package:sportify/src/util/dates.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
@@ -113,56 +109,57 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
+      providers: [
         StreamProvider<UserModel>(
-        create: (_) => getUser(),
-    initialData: UserModel("", "", [], [], []))
-    ],
-    child: WithForegroundTask(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Sportify"),
-          backgroundColor: Theme.of(context).backgroundColor,
-          actions: [
-            IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut().then((_) =>
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const MyLogin())));
-              },
-              icon: const Icon(Icons.logout),
-            )
-          ],
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _pages[_selectedIndex],
+            create: (_) => getUser(),
+            initialData: UserModel("", "", [], [], []))
+      ],
+      child: WithForegroundTask(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Sportify"),
+            backgroundColor: Theme.of(context).backgroundColor,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((_) =>
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const MyLogin())));
+                },
+                icon: const Icon(Icons.logout),
+              )
             ],
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (int index) => setState(() {
-            _selectedIndex = index;
-          }),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.run_circle),
-              label: 'Steps',
+          body: Container(
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _pages[_selectedIndex],
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Friends',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
-            ),
-          ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (int index) => setState(() {
+              _selectedIndex = index;
+            }),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.run_circle),
+                label: 'Steps',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.people),
+                label: 'Friends',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart),
+                label: 'Statistics',
+              ),
+            ],
+          ),
         ),
       ),
     );
