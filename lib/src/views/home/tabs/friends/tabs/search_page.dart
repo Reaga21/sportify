@@ -66,40 +66,53 @@ class _SearchPageState extends State<SearchPage> {
         ),
         Expanded(
           flex: 6,
-          child: ListView(
-            children: friendsSuggestions
-                .map(
-                  (doc) => ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage:
-                          MemoryImage(base64Decode(doc.get("pic"))),
-                    ),
-                    title: Text(doc.get("name")),
-                    trailing: StatefulBuilder(
-                      builder: (BuildContext context, StateSetter stateSetter) {
-                        return IconButton(
-                          icon: Icon(
-                            statusIcon,
-                            color: Colors.green,
-                          ),
-                          onPressed: () {
-                            users.doc(doc.id).update({
-                              'pendingFriends': FieldValue.arrayUnion([uid])
-                            });
-                            users.doc(uid).update({
-                              'pendingInv': FieldValue.arrayUnion([doc.id])
-                            });
-                            stateSetter(() => statusIcon = Icons.check_circle);
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        )
+          child: checkIfSuggestion(),
+        ),
       ],
     );
+  }
+
+  Widget checkIfSuggestion() {
+    if (friendsSuggestions.isNotEmpty) {
+      return ListView(
+        children: friendsSuggestions
+            .map(
+              (doc) => ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: MemoryImage(base64Decode(doc.get("pic"))),
+                ),
+                title: Text(doc.get("name")),
+                trailing: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter stateSetter) {
+                    return IconButton(
+                      icon: Icon(
+                        statusIcon,
+                        color: Colors.green,
+                      ),
+                      onPressed: () {
+                        users.doc(doc.id).update({
+                          'pendingReq': FieldValue.arrayUnion([uid])
+                        });
+                        users.doc(uid).update({
+                          'pendingInv': FieldValue.arrayUnion([doc.id])
+                        });
+                        stateSetter(() => statusIcon = Icons.check_circle);
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+            .toList(),
+      );
+    }
+    {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("Search for a friend"),
+        ],
+      );
+    }
   }
 }

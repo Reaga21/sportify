@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/views/home/home_page.dart';
 
@@ -16,10 +17,11 @@ class _LoadingPageState extends State<LoadingPage> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<BuildContext> _setup(BuildContext context) async {
-    DocumentSnapshot snap =
+    DocumentSnapshot stepsSnap =
         await FirebaseFirestore.instance.collection('steps').doc(uid).get();
-    StepModel steps = StepModel.fromJson(snap.data() as Map<String, dynamic>);
-    context.read<StepModel>().setStepModel(steps);
+    StepModel stepModel =
+        StepModel.fromJson(stepsSnap.data() as Map<String, dynamic>);
+    context.read<StepModel>().setStepModel(stepModel);
     return context;
   }
 

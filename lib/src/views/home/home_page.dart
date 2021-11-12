@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:isolate';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sportify/main.dart';
 import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
@@ -108,31 +109,38 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WithForegroundTask(
-      child: Scaffold(
-        body: IndexedStack(
-          children: _pages,
-          index: _selectedIndex,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (int index) => setState(() {
-            _selectedIndex = index;
-          }),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.run_circle),
-              label: 'Steps',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Friends',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
-            ),
-          ],
+    return MultiProvider(
+      providers: [
+        StreamProvider<UserModel>(
+            create: (_) => getUser(),
+            initialData: UserModel("", "", [], [], []))
+      ],
+      child: WithForegroundTask(
+        child: Scaffold(
+          body: IndexedStack(
+            children: _pages,
+            index: _selectedIndex,
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (int index) => setState(() {
+              _selectedIndex = index;
+            }),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.run_circle),
+                label: 'Steps',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.people),
+                label: 'Friends',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart),
+                label: 'Statistics',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -151,6 +159,16 @@ class _HomePageState extends State<HomePage> {
     FriendsPage(),
     StatisticPage(),
   ];
+
+  Stream<UserModel> getUser() {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .snapshots()
+        .map<UserModel>((snap) {
+      return UserModel.fromJson(snap.data() as Map<String, dynamic>);
+    });
+  }
 }
 
 class FirstTaskHandler implements TaskHandler {
