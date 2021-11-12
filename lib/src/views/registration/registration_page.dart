@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/util/dates.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
-import 'package:sportify/src/views/login_page.dart';
+import 'package:sportify/src/views/login/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Registration extends StatefulWidget {

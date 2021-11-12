@@ -12,7 +12,7 @@ class StepOverviewPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportify"),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Theme.of(context).backgroundColor,
         actions: [
           IconButton(
             onPressed: () {

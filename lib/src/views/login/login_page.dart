@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
-import 'package:sportify/src/views/registration_page.dart';
+import 'package:sportify/src/views/registration/registration_page.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);

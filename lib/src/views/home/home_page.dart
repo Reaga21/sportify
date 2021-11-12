@@ -11,7 +11,7 @@ import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
-import 'package:sportify/src/views/login_page.dart';
+import 'package:sportify/src/views/login/login_page.dart';
 
 const updateStepsTask = "updateStepsTask";
 
@@ -116,29 +116,9 @@ class _HomePageState extends State<HomePage> {
       ],
       child: WithForegroundTask(
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Sportify"),
-            backgroundColor: Theme.of(context).backgroundColor,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  FirebaseAuth.instance.signOut().then((_) =>
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const MyLogin())));
-                },
-                icon: const Icon(Icons.logout),
-              )
-            ],
-          ),
-          body: Container(
-            padding: const EdgeInsets.all(20),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _pages[_selectedIndex],
-              ],
-            ),
+          body: IndexedStack(
+            children: _pages,
+            index: _selectedIndex,
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _selectedIndex,
