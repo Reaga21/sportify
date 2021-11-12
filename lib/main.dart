@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/painting.dart';
 import 'package:provider/provider.dart';
 import 'package:sportify/src/models/step_model.dart';
-import 'package:sportify/src/views/Loading/loading_page.dart';
 import 'package:sportify/src/views/login_page.dart';
-import 'package:sportify/src/views/registration_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

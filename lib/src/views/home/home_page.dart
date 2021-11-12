@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
-import 'package:sportify/main.dart';
 import 'package:sportify/src/models/step_model.dart';
-import 'package:sportify/src/util/dates.dart';
+import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
@@ -24,27 +24,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Stream<StepCount> pedometerStream = Pedometer.stepCountStream;
+  late StreamSubscription<User?> _authListener;
   ReceivePort? _receivePort;
   int _counter = 0;
   int _selectedIndex = 0;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   void _startForegroundTask() async {
-    _receivePort = await FlutterForegroundTask.startService(
-      notificationTitle: 'Sportify',
-      notificationText: 'Counting  steps...',
-      callback: startCallback,
-    );
+    //only start Service if not already running
+    if (!await FlutterForegroundTask.isRunningService) {
+      _receivePort = await FlutterForegroundTask.startService(
+        notificationTitle: 'Sportify',
+        notificationText: 'Counting  steps...',
+        callback: startCallback,
+      );
 
-    _receivePort?.listen((event) async {
-      context.read<StepModel>().updateTodaySteps(event.steps);
-      // only update after 50 new steps counted
-      if (_counter > 50) {
-        await _updateSteps(context);
-        _counter = 0;
-      }
-      _counter++;
-    });
+      _receivePort?.listen((event) async {
+        context.read<StepModel>().updateTodaySteps(event.steps);
+        // only update after 50 new steps counted
+        if (_counter > 50) {
+          await _updateSteps(context);
+          _counter = 0;
+        }
+        _counter++;
+      });
+    }
   }
 
   Future<void> _updateSteps(BuildContext context) async {
@@ -64,6 +68,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _initForegroundTask();
     _startForegroundTask();
+    _authListener =
+        FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        FlutterForegroundTask.stopService().then((_) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const MyLogin()));
+        });
+      }
+    });
   }
 
   void _initForegroundTask() {
@@ -95,51 +108,58 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WithForegroundTask(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Sportify"),
-          backgroundColor: Theme.of(context).backgroundColor,
-          actions: [
-            IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut().then((_) =>
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const MyLogin())));
-              },
-              icon: const Icon(Icons.logout),
-            )
-          ],
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _pages[_selectedIndex],
+    return MultiProvider(
+      providers: [
+        StreamProvider<UserModel>(
+            create: (_) => getUser(),
+            initialData: UserModel("", "", [], [], []))
+      ],
+      child: WithForegroundTask(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Sportify"),
+            backgroundColor: Theme.of(context).backgroundColor,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((_) =>
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const MyLogin())));
+                },
+                icon: const Icon(Icons.logout),
+              )
             ],
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (int index) => setState(() {
-            _selectedIndex = index;
-          }),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.run_circle),
-              label: 'Steps',
+          body: Container(
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _pages[_selectedIndex],
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Friends',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
-            ),
-          ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (int index) => setState(() {
+              _selectedIndex = index;
+            }),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.run_circle),
+                label: 'Steps',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.people),
+                label: 'Friends',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart),
+                label: 'Statistics',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -148,6 +168,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _receivePort?.close();
+    _authListener.cancel();
+
     super.dispose();
   }
 
@@ -156,6 +178,16 @@ class _HomePageState extends State<HomePage> {
     FriendsPage(),
     StatisticPage(),
   ];
+
+  Stream<UserModel> getUser() {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .snapshots()
+        .map<UserModel>((snap) {
+      return UserModel.fromJson(snap.data() as Map<String, dynamic>);
+    });
+  }
 }
 
 class FirstTaskHandler implements TaskHandler {

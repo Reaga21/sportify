@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportify/src/views/home/home_page.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/registration_page.dart';
 
@@ -31,7 +30,7 @@ class _MyLoginState extends State<MyLogin> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
         Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Text(
           "Login",
           style: TextStyle(
@@ -78,14 +77,12 @@ class _MyLoginState extends State<MyLogin> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const HomePage()));
+                      builder: (_) => const LoadingPage()));
             },
           ).catchError((error) {
             if(error.code == 'user-not-found'){
-              print('Es konnte kein Nutzer mit der angegebenen Email gefunden werden.');
               _showDialogNoEmail();
             }else if(error.code == 'wrong-password'){
-              print('Das eingegebene Passwort ist falsch.');
               _showDialogWrongPassword();
             }
           });
