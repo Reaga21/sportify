@@ -22,7 +22,7 @@ class FriendsTabView extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: const [

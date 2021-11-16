@@ -32,7 +32,7 @@ class _LoadingPageState extends State<LoadingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportiy"),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: const Center(
         child: CircularProgressIndicator(),

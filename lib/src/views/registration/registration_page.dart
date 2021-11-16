@@ -28,7 +28,7 @@ class _RegistrationState extends State<Registration> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportify"),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Form(
         key: _formKey,
@@ -44,7 +44,7 @@ class _RegistrationState extends State<Registration> {
                     "Registrierung",
                     style: TextStyle(
                       fontSize: 30,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -58,7 +58,7 @@ class _RegistrationState extends State<Registration> {
                   "Leg einen Account an",
                   style: TextStyle(
                     fontSize: 20,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -71,12 +71,12 @@ class _RegistrationState extends State<Registration> {
                   padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 8.0),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 1.5,
-                    height: 50.0,
+                    height: 80.0,
                     child: TextField(
                       controller: bNController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Benutzername'),
+                          hintText: 'Benutzername', helperText: ' '),
                     ),
                   ),
                 ),
@@ -89,7 +89,7 @@ class _RegistrationState extends State<Registration> {
                   padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 1.5,
-                    height: 50.0,
+                    height: 80.0,
                     child: TextFormField(
                       validator: (value) {
                         if (!(EmailValidator.validate(value!))) {
@@ -100,7 +100,8 @@ class _RegistrationState extends State<Registration> {
                       controller: eMailController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Email Adresse'),
+                          hintText: 'Email Adresse',
+                          helperText: ' '),
                     ),
                   ),
                 ),
@@ -113,12 +114,14 @@ class _RegistrationState extends State<Registration> {
                   padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 1.5,
-                    height: 50.0,
+                    height: 80.0,
                     child: TextFormField(
                       controller: pWController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(), hintText: 'Passwort'),
+                          border: OutlineInputBorder(),
+                          hintText: 'Passwort',
+                          helperText: ' '),
                     ),
                   ),
                 ),
@@ -131,7 +134,7 @@ class _RegistrationState extends State<Registration> {
                   padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 1.5,
-                    height: 50.0,
+                    height: 80.0,
                     child: TextFormField(
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -157,7 +160,7 @@ class _RegistrationState extends State<Registration> {
                 ElevatedButton(
                   child: const Text('Registrieren'),
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).backgroundColor),
+                      primary: Theme.of(context).colorScheme.secondaryVariant),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       FirebaseAuth.instance
@@ -209,7 +212,7 @@ class _RegistrationState extends State<Registration> {
                 ElevatedButton(
                   child: const Text('Account bereits vorhanden'),
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).backgroundColor),
+                      primary: Theme.of(context).colorScheme.secondaryVariant),
                   onPressed: () {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => const MyLogin()));
@@ -222,6 +225,7 @@ class _RegistrationState extends State<Registration> {
       ),
     );
   }
+
   Future<void> _showDialogWeakPW() async {
     return showDialog<void>(
       context: context,
@@ -248,6 +252,7 @@ class _RegistrationState extends State<Registration> {
       },
     );
   }
+
   Future<void> _showDialogEmailIU() async {
     return showDialog<void>(
       context: context,
@@ -271,12 +276,9 @@ class _RegistrationState extends State<Registration> {
             ),
             TextButton(
               child: const Text('Zum Login'),
-
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const MyLogin()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const MyLogin()));
               },
             ),
           ],

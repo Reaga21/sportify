@@ -21,14 +21,28 @@ void main() async {
       ],
       child: MaterialApp(
         theme: ThemeData(
-          brightness: Brightness.dark,
-          primaryColor: Colors.lightGreen,
-          backgroundColor: Colors.green,
+          colorScheme: const ColorScheme(
+              primary: Color(0xFF00bb2d),
+              primaryVariant: Color(0xFF1c7923),
+              secondary: Color(0xFF9500bb),
+              secondaryVariant: Color(0xFF621479),
+              surface: Color(0xFF807b7e),
+              background: Color(0xFF3f3d3e),
+              error: Color(0xFFbb002c),
+              onPrimary: Color(0xFFffffff),
+              onSecondary: Color(0xFFffffff),
+              onSurface: Color(0xFFffffff),
+              onBackground: Color(0xFFffffff),
+              onError: Color(0xffffffff),
+              brightness: Brightness.dark),
+          fontFamily: 'Georgia',
+          textTheme: const TextTheme(
+            headline1: TextStyle(fontSize: 72, fontWeight: FontWeight.bold,
+            color: Colors.lightGreen),
+          ),
         ),
         home: const MyLogin(),
       ),
     ),
   );
 }
-
-

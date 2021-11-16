@@ -22,8 +22,7 @@ class _MyLoginState extends State<MyLogin> {
       appBar: AppBar(
         title: const Text("Sportify"),
         backgroundColor: Theme
-            .of(context)
-            .backgroundColor,
+            .of(context).colorScheme.primary,
       ),
       body: Center(
         child: Column(
@@ -33,13 +32,7 @@ class _MyLoginState extends State<MyLogin> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Text(
           "Login",
-          style: TextStyle(
-            color: Theme
-                .of(context)
-                .primaryColor,
-            fontSize: 40,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.headline1,
         ),
       ),
       const SizedBox(height: 50),
