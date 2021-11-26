@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/views/home/tabs/stepOverview/ranking_list.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/step_box.dart';
 
 class StepOverviewPage extends StatelessWidget {
@@ -22,10 +23,15 @@ class StepOverviewPage extends StatelessWidget {
           )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(10.0),
-        child: createStepBox(
-            context.watch<StepModel>().getTodaySteps().toString()),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10.0),
+            child: createStepBox(
+                context.watch<StepModel>().getTodaySteps().toString(), context),
+          ),
+          const RankingList()
+        ],
       ),
     );
   }

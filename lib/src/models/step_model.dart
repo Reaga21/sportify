@@ -73,6 +73,7 @@ class StepModel extends ChangeNotifier {
       steps = newModel.steps;
       lastUpdate = newModel.lastUpdate;
     }
+    notifyListeners();
   }
 
   factory StepModel.fromJson(Map<String, dynamic> json) =>

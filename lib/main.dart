@@ -26,7 +26,7 @@ void main() async {
               primaryVariant: Color(0xFF1c7923),
               secondary: Color(0xFF9500bb),
               secondaryVariant: Color(0xFF621479),
-              surface: Color(0xFF807b7e),
+              surface: Color(0xFF424242),
               background: Color(0xFF3f3d3e),
               error: Color(0xFFbb002c),
               onPrimary: Color(0xFFffffff),

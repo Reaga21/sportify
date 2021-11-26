@@ -17,7 +17,6 @@ class _SearchPageState extends State<SearchPage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   List<QueryDocumentSnapshot> friendsSuggestions = [];
-  var statusIcon = Icons.add_circle;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +110,6 @@ class _SearchPageState extends State<SearchPage> {
                         users.doc(uid).update({
                           'pendingInv': FieldValue.arrayUnion([doc.id])
                         });
-                        stateSetter(() => statusIcon = Icons.check_circle);
                       },
                     );
                   },

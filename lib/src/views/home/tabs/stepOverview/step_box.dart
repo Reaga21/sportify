@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget createStepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
+Widget createStepBox(String steps, BuildContext context, {String stepsGoal = "6000"}) => SizedBox(
       width: 500,
       height: 200,
       child: Stack(
@@ -8,7 +8,7 @@ Widget createStepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
           ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
             child: Container(
-              color: const Color.fromARGB(0xFF, 0x34, 0x34, 0x34),
+              color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
