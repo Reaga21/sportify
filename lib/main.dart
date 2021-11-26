@@ -35,7 +35,6 @@ void main() async {
               onBackground: Color(0xFFffffff),
               onError: Color(0xffffffff),
               brightness: Brightness.dark),
-          fontFamily: 'Georgia',
           textTheme: const TextTheme(
             headline1: TextStyle(fontSize: 72, fontWeight: FontWeight.bold,
             color: Colors.lightGreen),
