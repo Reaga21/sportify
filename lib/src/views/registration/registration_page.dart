@@ -42,7 +42,7 @@ class _RegistrationState extends State<Registration> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Text(
-                    "Register",
+                    "Registration",
                     style: TextStyle(
                       fontSize: 30,
                       color: Theme.of(context).colorScheme.secondary,
@@ -52,19 +52,7 @@ class _RegistrationState extends State<Registration> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Create an Account",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -159,7 +147,7 @@ class _RegistrationState extends State<Registration> {
                   height: 80,
                 ),
                 ElevatedButton(
-                  child: const Text('Registrieren'),
+                  child: const Text('Create an Account'),
                   style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).colorScheme.secondaryVariant),
                   onPressed: () {
@@ -213,7 +201,7 @@ class _RegistrationState extends State<Registration> {
                   height: 50,
                 ),
                 ElevatedButton(
-                  child: const Text('Account bereits vorhanden'),
+                  child: const Text('Already have an Account'),
                   style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).colorScheme.secondaryVariant),
                   onPressed: () {
@@ -245,7 +233,7 @@ class _RegistrationState extends State<Registration> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Zurück zur Registrierung'),
+              child: const Text('Create an Account'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -272,13 +260,13 @@ class _RegistrationState extends State<Registration> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Zur Registrierung'),
+              child: const Text('Create an Account'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Zum Login'),
+              child: const Text('Login'),
               onPressed: () {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (_) => const MyLogin()));
