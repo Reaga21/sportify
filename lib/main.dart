@@ -24,7 +24,7 @@ void main() async {
           colorScheme: const ColorScheme(
               primary: Color(0xFF00bb2d),
               primaryVariant: Color(0xFF1c7923),
-              secondary: Color(0xFF9500bb),
+              secondary: Color(0xFFffffff),
               secondaryVariant: Color(0xFF621479),
               surface: Color(0xFF424242),
               background: Color(0xFF3f3d3e),
@@ -37,7 +37,7 @@ void main() async {
               brightness: Brightness.dark),
           textTheme: const TextTheme(
             headline1: TextStyle(fontSize: 72, fontWeight: FontWeight.bold,
-            color: Colors.lightGreen),
+            color: Colors.white),
           ),
         ),
         home: const MyLogin(),

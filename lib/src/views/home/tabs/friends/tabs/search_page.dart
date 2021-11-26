@@ -27,9 +27,9 @@ class _SearchPageState extends State<SearchPage> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFdedbed),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
             ),
             child: searchBar(),
           ),

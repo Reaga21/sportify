@@ -23,15 +23,15 @@ class StepOverviewPage extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            child: createStepBox(
+      body: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            createStepBox(
                 context.watch<StepModel>().getTodaySteps().toString(), context),
-          ),
-          const RankingList()
-        ],
+            const RankingList()
+          ],
+        ),
       ),
     );
   }

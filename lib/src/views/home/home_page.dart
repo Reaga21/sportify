@@ -125,6 +125,8 @@ class _HomePageState extends State<HomePage> {
             onTap: (int index) => setState(() {
               _selectedIndex = index;
             }),
+            selectedItemColor: Theme.of(context).colorScheme.primary,
+            unselectedItemColor: Theme.of(context).colorScheme.secondary,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.run_circle),
