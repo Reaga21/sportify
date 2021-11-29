@@ -147,9 +147,11 @@ class _RegistrationState extends State<Registration> {
                   height: 80,
                 ),
                 ElevatedButton(
-                  child: const Text('Create an Account'),
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).colorScheme.secondaryVariant),
+                    minimumSize: const Size(190, 40),
+                    maximumSize: const Size(190, 40),
+                  ),
+                  child: const Text('Create an Account'),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       FirebaseAuth.instance
@@ -168,16 +170,6 @@ class _RegistrationState extends State<Registration> {
                             .collection('users')
                             .doc(user.user!.uid);
                         userDocument.set(UserModel(bNController.text, pic, [], [], []).toJson());
-                        /*
-                        Map<String, dynamic> userModel = {
-                          'friends': [],
-                          'name': bNController.text,
-                          'pendingInv': [],
-                          'pendingReq': [],
-                          'pic': ''
-                        };
-                        userDocument.set(userModel);*/
-
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -201,9 +193,11 @@ class _RegistrationState extends State<Registration> {
                   height: 50,
                 ),
                 ElevatedButton(
-                  child: const Text('Already have an Account'),
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).colorScheme.secondaryVariant),
+                    minimumSize: const Size(190, 40),
+                    maximumSize: const Size(190, 40),
+                  ),
+                  child: const Text('Already have an Account'),
                   onPressed: () {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => const MyLogin()));
