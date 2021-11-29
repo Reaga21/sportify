@@ -16,22 +16,20 @@ class RankingList extends StatelessWidget {
           AsyncSnapshot<Map<String, StepModel>> snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
-          children = buildList(snapshot.data!);
-        }
-        else if(snapshot.hasError){
           children = <Widget>[
-            Text(snapshot.error.toString())
+            Expanded(
+              child: ListView(
+                  children: buildList(snapshot.data!)),
+            ),
           ];
-        }
-        else {
+        } else if (snapshot.hasError) {
+          children = <Widget>[Text(snapshot.error.toString())];
+        } else {
           children = <Widget>[
-
             const CircularProgressIndicator(),
           ];
         }
-        return Column(
-            children: children,
-        );
+        return Row(children: children);
       },
     );
   }
@@ -41,8 +39,8 @@ class RankingList extends StatelessWidget {
     steps.forEach((uid, steps) {
       tiles.add(Card(
         child: ListTile(
-          title: Text(steps.getTodaySteps().toString()),
-          subtitle: Text(uid),
+          title: Text("${steps.getTodaySteps()} Steps today"),
+          subtitle: Text(steps.username),
         ),
       ));
     });
@@ -56,7 +54,7 @@ class RankingList extends StatelessWidget {
 
   Future<StepModel> getSteps(String uid) async {
     final CollectionReference steps =
-    FirebaseFirestore.instance.collection('steps');
+        FirebaseFirestore.instance.collection('steps');
     StepModel stepModel = StepModel.fromJson(
         (await steps.doc(uid).get()).data() as Map<String, dynamic>);
     return stepModel;

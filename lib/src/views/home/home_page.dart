@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
       _receivePort?.listen((event) async {
         context.read<StepModel>().updateTodaySteps(event.steps);
         // only update after 50 new steps counted
-        if (_counter > 50) {
+        if (_counter > 20) {
           await _updateSteps(context);
           _counter = 0;
         }
