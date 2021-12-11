@@ -32,8 +32,7 @@ Widget createStepBox(String steps, BuildContext context) => SizedBox(
                         children: const [
                           Text(
                             "Steps today",
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 28),
+                            style: TextStyle(color: Colors.white, fontSize: 28),
                           )
                         ],
                       )

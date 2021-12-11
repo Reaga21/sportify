@@ -76,7 +76,8 @@ class _RegistrationState extends State<Registration> {
                       controller: bNController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Benutzername', helperText: ' '),
+                          hintText: 'Benutzername',
+                          helperText: ' '),
                     ),
                   ),
                 ),
@@ -173,7 +174,8 @@ class _RegistrationState extends State<Registration> {
                             .collection('steps')
                             .doc(user.user!
                                 .uid); // Verbindung zur Firebase Collection steps
-                        stepsDocument.set(StepModel({}, today(), bNController.text).toJson());
+                        stepsDocument.set(
+                            StepModel({}, today(), bNController.text).toJson());
                         DocumentReference userDocument = FirebaseFirestore
                             .instance
                             .collection('users')

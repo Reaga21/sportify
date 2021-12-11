@@ -31,7 +31,8 @@ class StepOverviewPage extends StatelessWidget {
             Expanded(
               flex: 1,
               child: createStepBox(
-                  context.watch<StepModel>().getTodaySteps().toString(), context),
+                  context.watch<StepModel>().getTodaySteps().toString(),
+                  context),
             ),
             Row(
               children: [

@@ -18,8 +18,7 @@ class RankingList extends StatelessWidget {
         if (snapshot.hasData) {
           children = <Widget>[
             Expanded(
-              child: ListView(
-                  children: buildList(snapshot.data!)),
+              child: ListView(children: buildList(snapshot.data!)),
             ),
           ];
         } else if (snapshot.hasError) {

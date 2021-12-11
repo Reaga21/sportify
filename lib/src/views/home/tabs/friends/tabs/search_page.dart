@@ -82,8 +82,7 @@ class _SearchPageState extends State<SearchPage> {
       return ListView(
         children: friendsSuggestions
             .map(
-              (doc) =>
-              ListTile(
+              (doc) => ListTile(
                 leading: CircleAvatar(
                   backgroundImage: MemoryImage(base64Decode(doc.get("pic"))),
                 ),
@@ -93,16 +92,15 @@ class _SearchPageState extends State<SearchPage> {
                     UserModel user = context.read<UserModel>();
                     bool alreadyInv = user.pendingInv.contains(doc.id);
                     return IconButton(
-                      icon: alreadyInv ?
-                      const Icon(
-                        Icons.pending,
-                        color: Colors.yellow,
-                      ) :
-                      const Icon(
-                        Icons.add_circle,
-                        color: Colors.green,
-                      )
-                      ,
+                      icon: alreadyInv
+                          ? const Icon(
+                              Icons.pending,
+                              color: Colors.yellow,
+                            )
+                          : const Icon(
+                              Icons.add_circle,
+                              color: Colors.green,
+                            ),
                       onPressed: () {
                         users.doc(doc.id).update({
                           'pendingReq': FieldValue.arrayUnion([uid])
@@ -115,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
               ),
-        )
+            )
             .toList(),
       );
     } else {

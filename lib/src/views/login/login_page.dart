@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/registration/registration_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -12,95 +13,108 @@ class MyLogin extends StatefulWidget {
 
 class _MyLoginState extends State<MyLogin> {
   User? user;
+  PermissionStatus _permissionStatus = PermissionStatus.denied;
+  final Permission _permission = Permission.activityRecognition;
 
   final _emailInput = TextEditingController(text: 'andrea.robitzsch@gmail.com');
   final _passInput = TextEditingController(text: '123456');
+
+  @override
+  void initState() {
+    super.initState();
+
+    _listenForPermissionStatus();
+    if (_permissionStatus != PermissionStatus.granted) {
+      requestPermission(_permission);
+    }
+  }
+
+  void _listenForPermissionStatus() async {
+    final status = await _permission.status;
+    setState(() => _permissionStatus = status);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportify"),
-        backgroundColor: Theme
-            .of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-        Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        child: Text(
-          "Login",
-          style: Theme.of(context).textTheme.headline1,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Text(
+                "Login",
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            ),
+            const SizedBox(height: 50),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: _emailInput,
+                decoration: const InputDecoration(hintText: 'Email'),
+              ),
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: _passInput,
+                obscureText: true,
+                decoration: const InputDecoration(hintText: 'Password'),
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            ElevatedButton(
+              child: const Text('Sign in with Email'),
+              style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).backgroundColor),
+              onPressed: () {
+                FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: _emailInput.text, password: _passInput.text)
+                    .then(
+                  (_) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const LoadingPage()));
+                  },
+                ).catchError((error) {
+                  if (error.code == 'user-not-found') {
+                    _showDialogNoEmail();
+                  } else if (error.code == 'wrong-password') {
+                    _showDialogWrongPassword();
+                  }
+                });
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              child: const Text('Create an Account'),
+              style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).backgroundColor),
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const Registration()));
+              },
+            ),
+          ],
         ),
       ),
-      const SizedBox(height: 50),
-      SizedBox(
-        width: 250,
-        child: TextField(
-          controller: _emailInput,
-          decoration: const InputDecoration(hintText: 'Email'),
-        ),
-      ),
-      const SizedBox(
-        height: 25,
-      ),
-      SizedBox(
-        width: 250,
-        child: TextField(
-          controller: _passInput,
-          obscureText: true,
-          decoration: const InputDecoration(hintText: 'Password'),
-        ),
-      ),
-      const SizedBox(
-        height: 50,
-      ),
-      ElevatedButton(
-        child: const Text('Sign in with Email'),
-        style: ElevatedButton.styleFrom(
-            primary: Theme
-                .of(context)
-                .backgroundColor),
-        onPressed: () {
-          FirebaseAuth.instance
-              .signInWithEmailAndPassword(email: _emailInput.text, password: _passInput.text).then(
-                (_) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const LoadingPage()));
-            },
-          ).catchError((error) {
-            if(error.code == 'user-not-found'){
-              _showDialogNoEmail();
-            }else if(error.code == 'wrong-password'){
-              _showDialogWrongPassword();
-            }
-          });
-        },
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      ElevatedButton(
-        child: const Text('Create an Account'),
-        style: ElevatedButton.styleFrom(
-            primary: Theme
-                .of(context)
-                .backgroundColor),
-        onPressed: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const Registration()));
-        },
-      ),
-        ],
-      ),
-    ),);
+    );
   }
+
   Future<void> _showDialogNoEmail() async {
     return showDialog<void>(
       context: context,
@@ -111,7 +125,8 @@ class _MyLoginState extends State<MyLogin> {
           content: SingleChildScrollView(
             child: ListBody(
               children: const <Widget>[
-                Text('Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
+                Text(
+                    'Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
               ],
             ),
           ),
@@ -124,19 +139,17 @@ class _MyLoginState extends State<MyLogin> {
             ),
             TextButton(
               child: const Text('Account anlegen!'),
-
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const Registration()));
-            },
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const Registration()));
+              },
             ),
           ],
         );
       },
     );
   }
+
   Future<void> _showDialogWrongPassword() async {
     return showDialog<void>(
       context: context,
@@ -160,17 +173,22 @@ class _MyLoginState extends State<MyLogin> {
             ),
             TextButton(
               child: const Text('Account anlegen'),
-
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const Registration()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const Registration()));
               },
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> requestPermission(Permission permission) async {
+    final status = await permission.request();
+
+    setState(() {
+      _permissionStatus = status;
+    });
   }
 }
