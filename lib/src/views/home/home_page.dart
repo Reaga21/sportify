@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  static const List<Widget> _pages = <Widget>[
+  static List<Widget> _pages = <Widget>[
     StepOverviewPage(),
     FriendsPage(),
     StatisticPage(),
