@@ -6,7 +6,9 @@ import 'package:sportify/src/views/home/tabs/stepOverview/ranking_list.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/step_box.dart';
 
 class StepOverviewPage extends StatelessWidget {
-  const StepOverviewPage({Key? key}) : super(key: key);
+  const StepOverviewPage({Key? key, required this.changeTabCallback})
+      : super(key: key);
+  final void Function(int) changeTabCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +52,9 @@ class StepOverviewPage extends StatelessWidget {
                 ),
               ],
             ),
-            const Expanded(
+            Expanded(
               flex: 2,
-              child: RankingList(),
+              child: RankingList(changeTabCallback: changeTabCallback, ),
             )
           ],
         ),

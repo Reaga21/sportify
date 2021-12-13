@@ -5,7 +5,9 @@ import 'package:sportify/src/models/user_model.dart';
 import 'package:provider/provider.dart';
 
 class RankingList extends StatelessWidget {
-  const RankingList({Key? key}) : super(key: key);
+  const RankingList({Key? key, required this.changeTabCallback})
+      : super(key: key);
+  final void Function(int) changeTabCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +18,24 @@ class RankingList extends StatelessWidget {
           AsyncSnapshot<Map<String, StepModel>> snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
-          children = <Widget>[
-            Expanded(
-              child: ListView(children: buildList(snapshot.data!)),
-            ),
-          ];
+          if (snapshot.data!.isEmpty) {
+            children = <Widget>[
+              Center(
+                child: ElevatedButton(
+                  onPressed: () => changeTabCallback(1),
+                  child: const Text('Find Friends'),
+                  style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).backgroundColor),
+                ),
+              ),
+            ];
+          } else {
+            children = <Widget>[
+              Expanded(
+                child: ListView(children: buildList(snapshot.data!)),
+              ),
+            ];
+          }
         } else if (snapshot.hasError) {
           children = <Widget>[Text(snapshot.error.toString())];
         } else {
@@ -28,7 +43,8 @@ class RankingList extends StatelessWidget {
             const CircularProgressIndicator(),
           ];
         }
-        return Row(children: children);
+        return Row(
+            mainAxisAlignment: MainAxisAlignment.center, children: children);
       },
     );
   }

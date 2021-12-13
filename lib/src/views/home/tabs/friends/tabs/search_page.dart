@@ -36,25 +36,27 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+              ),
+              child: searchBar(),
             ),
-            child: searchBar(),
           ),
-        ),
-        Expanded(
-          flex: 6,
-          child: resultSet(),
-        ),
-      ],
+          Expanded(
+            flex: 6,
+            child: resultSet(),
+          ),
+        ],
+      ),
     );
   }
 
