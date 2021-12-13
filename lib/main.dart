@@ -16,7 +16,7 @@ void main() async {
               "stepsAbs": 0,
               "stepsDay": 0,
             }
-          }, "00:00:00 01.01.1970"),
+          }, "00:00:00 01.01.1970", "Mustermann"),
         )
       ],
       child: MaterialApp(
@@ -36,8 +36,10 @@ void main() async {
               onError: Color(0xffffffff),
               brightness: Brightness.dark),
           textTheme: const TextTheme(
-            headline1: TextStyle(fontSize: 72, fontWeight: FontWeight.bold,
-            color: Colors.white),
+            headline1: TextStyle(
+                fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white),
+            headline3: TextStyle(
+                fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         home: const MyLogin(),

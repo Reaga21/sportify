@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/registration/registration_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -12,20 +13,36 @@ class MyLogin extends StatefulWidget {
 
 class _MyLoginState extends State<MyLogin> {
   User? user;
+  PermissionStatus _permissionStatus = PermissionStatus.denied;
+  final Permission _permission = Permission.activityRecognition;
 
   final _emailInput = TextEditingController(text: 'andrea.robitzsch@gmail.com');
   final _passInput = TextEditingController(text: '123456');
+
+  @override
+  void initState() {
+    super.initState();
+
+    _listenForPermissionStatus();
+    if (_permissionStatus != PermissionStatus.granted) {
+      requestPermission(_permission);
+    }
+  }
+
+  void _listenForPermissionStatus() async {
+    final status = await _permission.status;
+    setState(() => _permissionStatus = status);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sportify"),
-        backgroundColor: Theme
-            .of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-        
+
         child: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -96,6 +113,7 @@ class _MyLoginState extends State<MyLogin> {
         ),
     ),);
   }
+
   Future<void> _showDialogNoEmail() async {
     return showDialog<void>(
       context: context,
@@ -106,7 +124,8 @@ class _MyLoginState extends State<MyLogin> {
           content: SingleChildScrollView(
             child: ListBody(
               children: const <Widget>[
-                Text('Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
+                Text(
+                    'Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
               ],
             ),
           ),
@@ -132,6 +151,7 @@ class _MyLoginState extends State<MyLogin> {
       },
     );
   }
+
   Future<void> _showDialogWrongPassword() async {
     return showDialog<void>(
       context: context,
@@ -157,15 +177,21 @@ class _MyLoginState extends State<MyLogin> {
               child: const Text('Create an Account'),
 
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const Registration()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const Registration()));
               },
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> requestPermission(Permission permission) async {
+    final status = await permission.request();
+
+    setState(() {
+      _permissionStatus = status;
+    });
   }
 }

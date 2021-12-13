@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-Widget createStepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
+Widget createStepBox(String steps, BuildContext context) => SizedBox(
       width: 500,
       height: 200,
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(6.0),
             child: Container(
-              color: const Color.fromARGB(0xFF, 0x34, 0x34, 0x34),
+              color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -26,23 +26,13 @@ Widget createStepBox(String steps, {String stepsGoal = "6000"}) => SizedBox(
                     ],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Column(
-                        children: [
-                          Text(
-                            "/$stepsGoal",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 35),
-                          )
-                        ],
-                      ),
-                      Column(
                         children: const [
-                          Icon(
-                            Icons.sports_score,
-                            color: Colors.white,
-                            size: 40,
+                          Text(
+                            "Steps today",
+                            style: TextStyle(color: Colors.white, fontSize: 28),
                           )
                         ],
                       )

@@ -21,6 +21,7 @@ class UserModel extends ChangeNotifier {
       pendingReq = newModel.pendingReq;
       pendingInv = newModel.pendingInv;
       friends = newModel.friends;
+      notifyListeners();
     }
   }
 

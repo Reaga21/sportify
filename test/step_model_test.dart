@@ -15,7 +15,8 @@ final String jsonStringToday = '''{
         "stepsDay": 200,
         "stepsAbs": 1000
       }
-    }
+    },
+    "username" : "test"
 }''';
 
 final String jsonStringYesterday = '''{
@@ -25,13 +26,15 @@ final String jsonStringYesterday = '''{
         "stepsDay": 200,
         "stepsAbs": 1000
       }
-    }
+    },
+    "username" : "test"
 }''';
 
 const String jsonStringFirst = '''{
     "lastUpdate": "13:53:23 14.10.2021",
     "steps": {
-    }
+    },
+    "username" : "test"
 }''';
 
 final Map<String, dynamic> jsonToday = jsonDecode(jsonStringToday);

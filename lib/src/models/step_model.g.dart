@@ -11,9 +11,11 @@ StepModel _$StepModelFromJson(Map<String, dynamic> json) => StepModel(
         (k, e) => MapEntry(k, Map<String, int>.from(e as Map)),
       ),
       json['lastUpdate'] as String,
+      json['username'] as String,
     );
 
 Map<String, dynamic> _$StepModelToJson(StepModel instance) => <String, dynamic>{
       'steps': instance.steps,
       'lastUpdate': instance.lastUpdate,
+      'username': instance.username,
     };
