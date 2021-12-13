@@ -24,8 +24,6 @@ class RankingList extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => changeTabCallback(1),
                   child: const Text('Find Friends'),
-                  style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).backgroundColor),
                 ),
               ),
             ];
