@@ -17,6 +17,22 @@ class _SearchPageState extends State<SearchPage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   List<QueryDocumentSnapshot> friendsSuggestions = [];
+  String lastSearch = "";
+
+  getSuggestion(String? text) {
+    text ??= lastSearch;
+    users
+        .where("name", isGreaterThanOrEqualTo: text)
+        .where("name", isLessThanOrEqualTo: "$text\uf7ff")
+        .get()
+        .then((query) {
+      friendsSuggestions = [];
+      if (text!.isNotEmpty) {
+        friendsSuggestions = query.docs.where((doc) => doc.id != uid).toList();
+      }
+      setState(() => lastSearch = text!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,20 +68,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Container(
             margin: const EdgeInsets.only(left: 10),
             child: TextField(
-              onChanged: (text) async {
-                users
-                    .where("name", isGreaterThanOrEqualTo: text)
-                    .where("name", isLessThanOrEqualTo: "$text\uf7ff")
-                    .get()
-                    .then((query) {
-                  friendsSuggestions = [];
-                  if (text.isNotEmpty) {
-                    friendsSuggestions =
-                        query.docs.where((doc) => doc.id != uid).toList();
-                  }
-                  setState(() {});
-                });
-              },
+              onChanged: getSuggestion,
               maxLines: 1,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -108,6 +111,7 @@ class _SearchPageState extends State<SearchPage> {
                         users.doc(uid).update({
                           'pendingInv': FieldValue.arrayUnion([doc.id])
                         });
+                        getSuggestion(null);
                       },
                     );
                   },
