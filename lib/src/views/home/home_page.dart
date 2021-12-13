@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   ReceivePort? _receivePort;
   int _counter = 0;
   int _selectedIndex = 0;
+  List<Widget> _pages = [];
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   void _startForegroundTask() async {
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       _receivePort?.listen((event) async {
         context.read<StepModel>().updateTodaySteps(event.steps);
         // only update after 50 new steps counted
-        if (_counter > 50) {
+        if (_counter > 20) {
           await _updateSteps(context);
           _counter = 0;
         }
@@ -77,6 +78,11 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+    _pages = <Widget>[
+      StepOverviewPage(changeTabCallback: changeTab,),
+      const FriendsPage(),
+      const StatisticPage(),
+    ];
   }
 
   void _initForegroundTask() {
@@ -122,9 +128,9 @@ class _HomePageState extends State<HomePage> {
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _selectedIndex,
-            onTap: (int index) => setState(() {
-              _selectedIndex = index;
-            }),
+            onTap: changeTab,
+            selectedItemColor: Theme.of(context).colorScheme.primary,
+            unselectedItemColor: Theme.of(context).colorScheme.secondary,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.run_circle),
@@ -145,6 +151,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void changeTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   void dispose() {
     _receivePort?.close();
@@ -153,11 +165,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  static const List<Widget> _pages = <Widget>[
-    StepOverviewPage(),
-    FriendsPage(),
-    StatisticPage(),
-  ];
+
 
   Stream<UserModel> getUser() {
     return FirebaseFirestore.instance

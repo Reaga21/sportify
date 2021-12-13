@@ -17,29 +17,46 @@ class _SearchPageState extends State<SearchPage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   List<QueryDocumentSnapshot> friendsSuggestions = [];
-  var statusIcon = Icons.add_circle;
+  String lastSearch = "";
+
+  getSuggestion(String? text) {
+    text ??= lastSearch;
+    users
+        .where("name", isGreaterThanOrEqualTo: text)
+        .where("name", isLessThanOrEqualTo: "$text\uf7ff")
+        .get()
+        .then((query) {
+      friendsSuggestions = [];
+      if (text!.isNotEmpty) {
+        friendsSuggestions = query.docs.where((doc) => doc.id != uid).toList();
+      }
+      setState(() => lastSearch = text!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFdedbed),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+              ),
+              child: searchBar(),
             ),
-            child: searchBar(),
           ),
-        ),
-        Expanded(
-          flex: 6,
-          child: resultSet(),
-        ),
-      ],
+          Expanded(
+            flex: 6,
+            child: resultSet(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -53,20 +70,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Container(
             margin: const EdgeInsets.only(left: 10),
             child: TextField(
-              onChanged: (text) async {
-                users
-                    .where("name", isGreaterThanOrEqualTo: text)
-                    .where("name", isLessThanOrEqualTo: "$text\uf7ff")
-                    .get()
-                    .then((query) {
-                  friendsSuggestions = [];
-                  if (text.isNotEmpty) {
-                    friendsSuggestions =
-                        query.docs.where((doc) => doc.id != uid).toList();
-                  }
-                  setState(() {});
-                });
-              },
+              onChanged: getSuggestion,
               maxLines: 1,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -83,8 +87,7 @@ class _SearchPageState extends State<SearchPage> {
       return ListView(
         children: friendsSuggestions
             .map(
-              (doc) =>
-              ListTile(
+              (doc) => ListTile(
                 leading: CircleAvatar(
                   backgroundImage: MemoryImage(base64Decode(doc.get("pic"))),
                 ),
@@ -94,16 +97,15 @@ class _SearchPageState extends State<SearchPage> {
                     UserModel user = context.read<UserModel>();
                     bool alreadyInv = user.pendingInv.contains(doc.id);
                     return IconButton(
-                      icon: alreadyInv ?
-                      const Icon(
-                        Icons.pending,
-                        color: Colors.yellow,
-                      ) :
-                      const Icon(
-                        Icons.add_circle,
-                        color: Colors.green,
-                      )
-                      ,
+                      icon: alreadyInv
+                          ? const Icon(
+                              Icons.pending,
+                              color: Colors.yellow,
+                            )
+                          : const Icon(
+                              Icons.add_circle,
+                              color: Colors.green,
+                            ),
                       onPressed: () {
                         users.doc(doc.id).update({
                           'pendingReq': FieldValue.arrayUnion([uid])
@@ -111,13 +113,13 @@ class _SearchPageState extends State<SearchPage> {
                         users.doc(uid).update({
                           'pendingInv': FieldValue.arrayUnion([doc.id])
                         });
-                        stateSetter(() => statusIcon = Icons.check_circle);
+                        getSuggestion(null);
                       },
                     );
                   },
                 ),
               ),
-        )
+            )
             .toList(),
       );
     } else {

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class InvitesPage extends StatefulWidget {
   const InvitesPage({Key? key}) : super(key: key);
 

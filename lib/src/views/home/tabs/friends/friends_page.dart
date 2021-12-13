@@ -25,9 +25,10 @@ class FriendsTabView extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.primary,
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
+            children: [
               TabBar(
-                tabs: [
+                indicatorColor: Theme.of(context).colorScheme.secondary,
+                tabs: const [
                   Tab(
                     text: 'Search',
                   ),

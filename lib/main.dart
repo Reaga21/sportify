@@ -16,7 +16,7 @@ void main() async {
               "stepsAbs": 0,
               "stepsDay": 0,
             }
-          }, "00:00:00 01.01.1970"),
+          }, "00:00:00 01.01.1970", "Mustermann"),
         )
       ],
       child: MaterialApp(
@@ -24,9 +24,9 @@ void main() async {
           colorScheme: const ColorScheme(
               primary: Color(0xFF00bb2d),
               primaryVariant: Color(0xFF1c7923),
-              secondary: Color(0xFF9500bb),
-              secondaryVariant: Color(0xFF621479),
-              surface: Color(0xFF807b7e),
+              secondary: Color(0xFFffffff),
+              secondaryVariant: Color(0xFFCECECE),
+              surface: Color(0xFF424242),
               background: Color(0xFF3f3d3e),
               error: Color(0xFFbb002c),
               onPrimary: Color(0xFFffffff),
@@ -36,8 +36,10 @@ void main() async {
               onError: Color(0xffffffff),
               brightness: Brightness.dark),
           textTheme: const TextTheme(
-            headline1: TextStyle(fontSize: 72, fontWeight: FontWeight.bold,
-            color: Colors.lightGreen),
+            headline1: TextStyle(
+                fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white),
+            headline3: TextStyle(
+                fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         home: const MyLogin(),

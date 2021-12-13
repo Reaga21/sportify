@@ -8,8 +8,9 @@ part 'step_model.g.dart';
 class StepModel extends ChangeNotifier {
   Map<String, Map<String, int>> steps;
   String lastUpdate;
+  String username;
 
-  StepModel(this.steps, this.lastUpdate);
+  StepModel(this.steps, this.lastUpdate, this.username);
 
   int getTodaySteps() {
     return steps[dates.today()]?['stepsDay'] ?? 0;
@@ -72,7 +73,9 @@ class StepModel extends ChangeNotifier {
     if (newModel != null) {
       steps = newModel.steps;
       lastUpdate = newModel.lastUpdate;
+      username = newModel.username;
     }
+    notifyListeners();
   }
 
   factory StepModel.fromJson(Map<String, dynamic> json) =>
