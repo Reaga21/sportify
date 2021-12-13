@@ -65,7 +65,7 @@ class _RegistrationState extends State<Registration> {
                       controller: bNController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Benutzername',
+                          hintText: 'Username',
                           helperText: ' '),
                     ),
                   ),
@@ -83,14 +83,14 @@ class _RegistrationState extends State<Registration> {
                     child: TextFormField(
                       validator: (value) {
                         if (!(EmailValidator.validate(value!))) {
-                          return "Bitte gib eine gültige Email-Adresse ein.";
+                          return "Please fill in a valid email address.";
                         }
                         return null;
                       },
                       controller: eMailController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Email Adresse',
+                          hintText: 'Email Address',
                           helperText: ' '),
                     ),
                   ),
@@ -110,7 +110,7 @@ class _RegistrationState extends State<Registration> {
                       obscureText: true,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Passwort',
+                          hintText: 'Password',
                           helperText: ' '),
                     ),
                   ),
@@ -130,10 +130,10 @@ class _RegistrationState extends State<Registration> {
                         decoration: const InputDecoration(
                             errorMaxLines: 3,
                             border: OutlineInputBorder(),
-                            hintText: 'Passwort bestätigen'),
+                            hintText: 'Confirm Password'),
                         validator: (value) {
                           if (pWController.text != value) {
-                            return "Die beiden Passwörter sind ungleich";
+                            return "The two passwords are not the same.";
                           }
                           return null;
                         }),
@@ -219,15 +219,8 @@ class _RegistrationState extends State<Registration> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Passwort zu schwach!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Das eingegebene Passwort ist zu schwach!'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
+          title: const Text('Password is too weak!'),
+                    actions: <Widget>[
             TextButton(
               child: const Text('Create an Account'),
               onPressed: () {
@@ -246,15 +239,8 @@ class _RegistrationState extends State<Registration> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Account bereits vorhanden!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Es gibt bereits einen Account mit dieser Email Adresse!'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
+          title: const Text('Account already exists!'),
+                    actions: <Widget>[
             TextButton(
               child: const Text('Create an Account'),
               onPressed: () {

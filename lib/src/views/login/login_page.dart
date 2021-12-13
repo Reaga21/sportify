@@ -89,9 +89,9 @@ class _MyLoginState extends State<MyLogin> {
               },
             ).catchError((error) {
               if(error.code == 'user-not-found'){
-                _showDialogNoEmail();
+                _showDialogWrongEmPW();
               }else if(error.code == 'wrong-password'){
-                _showDialogWrongPassword();
+                _showDialogWrongEmPW();
               }
             });
           },
@@ -114,21 +114,13 @@ class _MyLoginState extends State<MyLogin> {
     ),);
   }
 
-  Future<void> _showDialogNoEmail() async {
+  Future<void> _showDialogWrongEmPW() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Email nicht gefunden!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text(
-                    'Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
-              ],
-            ),
-          ),
+          title: const Text('Email or Password are wrong!'),
           actions: <Widget>[
             TextButton(
               child: const Text('Login'),
@@ -145,41 +137,6 @@ class _MyLoginState extends State<MyLogin> {
                   MaterialPageRoute(
                       builder: (_) => const Registration()));
             },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showDialogWrongPassword() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Wrong Password!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Das eingegebene Passwort ist inkorrekt!'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Login'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Create an Account'),
-
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const Registration()));
-              },
             ),
           ],
         );

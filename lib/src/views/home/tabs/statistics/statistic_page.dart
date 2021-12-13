@@ -23,6 +23,8 @@ class _StatisticPageState extends State<StatisticPage> {
     return dataSteps;
   }
 
+
+
   final List<_SalesData> data = [
     _SalesData('Jan', 35),
     _SalesData('Feb', 28),
