@@ -1,4 +1,6 @@
 #!/bin/sh
+echo "precommit run"
+pwd
 flutter format .
 
 flutter analyze

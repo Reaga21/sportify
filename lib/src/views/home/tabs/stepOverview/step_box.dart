@@ -7,6 +7,7 @@ class StepBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     return SizedBox(
       width: 500,
       height: 200,
@@ -52,6 +53,5 @@ class StepBox extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }
