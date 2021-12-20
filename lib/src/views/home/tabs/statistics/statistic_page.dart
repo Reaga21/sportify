@@ -64,10 +64,10 @@ class _StatisticPageState extends State<StatisticPage> {
               }
 
               //dataSteps.data!['keyword']; // so kommt man an die Daten ran
-             // for(MapEntry entry in dataSteps.data!.entries) {
-               // entry.key //DATUM
+              // for(MapEntry entry in dataSteps.data!.entries) {
+              // entry.key //DATUM
               //  entry.value //STEP
-             // }
+              // }
               //Map<String, dynamic> realData = dataSteps.data!;
               return //Initialize the chart widget
                   SfCartesianChart(
@@ -80,7 +80,8 @@ class _StatisticPageState extends State<StatisticPage> {
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: <ChartSeries<_SalesData, String>>[
                   LineSeries<_SalesData, String>(
-                    dataSource: data,  // keine Forschleifen verwendbar -- entsprechende Funktionalitäten in einer Funktion auslagern
+                    dataSource:
+                        data, // keine Forschleifen verwendbar -- entsprechende Funktionalitäten in einer Funktion auslagern
                     xValueMapper: (_SalesData sales, _) => sales.year,
                     yValueMapper: (_SalesData sales, _) => sales.sales,
                     name: 'Sales',

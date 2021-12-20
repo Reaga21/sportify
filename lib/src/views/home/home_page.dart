@@ -79,7 +79,9 @@ class _HomePageState extends State<HomePage> {
       }
     });
     _pages = <Widget>[
-      StepOverviewPage(changeTabCallback: changeTab,),
+      StepOverviewPage(
+        changeTabCallback: changeTab,
+      ),
       const FriendsPage(),
       const StatisticPage(),
     ];
@@ -164,8 +166,6 @@ class _HomePageState extends State<HomePage> {
 
     super.dispose();
   }
-
-
 
   Stream<UserModel> getUser() {
     return FirebaseFirestore.instance

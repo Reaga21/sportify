@@ -52,7 +52,9 @@ class StepOverviewPage extends StatelessWidget {
             ),
             Expanded(
               flex: 2,
-              child: RankingList(changeTabCallback: changeTabCallback, ),
+              child: RankingList(
+                changeTabCallback: changeTabCallback,
+              ),
             )
           ],
         ),
