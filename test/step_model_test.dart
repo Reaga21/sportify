@@ -1,8 +1,8 @@
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/util/dates.dart';
 import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'package:test/test.dart';
 
 final String jsonStringToday = '''{
     "lastUpdate": "13:53:23 14.10.2021",
