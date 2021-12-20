@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sportify/src/models/step_model.dart';
 
-Widget createStepBox(String steps, BuildContext context) => SizedBox(
+class StepBox extends StatelessWidget {
+  const StepBox({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
       width: 500,
       height: 200,
       child: Stack(
@@ -18,7 +25,7 @@ Widget createStepBox(String steps, BuildContext context) => SizedBox(
                     children: [
                       Center(
                         child: Text(
-                          steps,
+                          context.watch<StepModel>().getTodaySteps().toString(),
                           style: const TextStyle(
                               color: Colors.white, fontSize: 70),
                         ),
@@ -45,3 +52,6 @@ Widget createStepBox(String steps, BuildContext context) => SizedBox(
         ],
       ),
     );
+    ;
+  }
+}

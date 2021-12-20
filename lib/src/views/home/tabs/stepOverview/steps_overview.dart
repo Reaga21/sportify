@@ -30,11 +30,9 @@ class StepOverviewPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
+            const Expanded(
               flex: 1,
-              child: createStepBox(
-                  context.watch<StepModel>().getTodaySteps().toString(),
-                  context),
+              child: StepBox(),
             ),
             Row(
               children: [
