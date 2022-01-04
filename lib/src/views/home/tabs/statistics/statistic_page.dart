@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:stats/stats.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
-import 'package:sportify/src/util/dates.dart' as dates;
+import 'package:sportify/src/util/dates.dart';
 import 'package:intl/intl.dart';
 
 class StatisticPage extends StatefulWidget {
@@ -16,14 +16,6 @@ class StatisticPage extends StatefulWidget {
 }
 
 class _StatisticPageState extends State<StatisticPage> {
-  late List<StepsData> _chartData;
-
-  @override
-  void initState() {
-    _chartData = getChartData();
-    super.initState();
-  }
-
   Future<Map<String, dynamic>> readData() async {
     CollectionReference steps = FirebaseFirestore.instance.collection('steps');
     DocumentSnapshot date =
@@ -67,63 +59,36 @@ class _StatisticPageState extends State<StatisticPage> {
                 }
 
                 //dataSteps.data!['keyword']; // so kommt man an die Daten ran
-                // for(MapEntry entry in dataSteps.data!.entries) {
-                // entry.key //DATUM
-                //  entry.value //STEP
-                // }
+                //
                 //Map<String, dynamic> realData = dataSteps.data!;
-                return
-                  SfCartesianChart(
-                      series: <ChartSeries>[
-                        BarSeries<StepsData, dynamic>(
-                            dataSource: _chartData,
-                            xValueMapper: (StepsData data,_) => data.date,
-                            yValueMapper: (StepsData data,_) => data.steps),
-                      ],
-                      primaryXAxis: CategoryAxis(),
-                      primaryYAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift)
-                  );
-
-              }
-
-          )
+                return SfCartesianChart(
+                    series: <ChartSeries>[
+                      BarSeries<StepsData, dynamic>(
+                          dataSource: getChartData(dataSteps.data!),
+                          xValueMapper: (StepsData data, _) =>
+                              shortDate(data.date),
+                          yValueMapper: (StepsData data, _) => data.steps),
+                    ],
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                        edgeLabelPlacement: EdgeLabelPlacement.shift));
+              })
         ],
       ),
     );
   }
 
-  List<StepsData> getChartData() {
+  List<StepsData> getChartData(Map<String, dynamic> dataSteps) {
+    final List<StepsData> chartData = [];
 
-    final List<StepsData> chartData = [
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 6))), 1000
-          ),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 5))),
-          1000),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 4))),
-          1000),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 3))),
-          1000),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 2))),
-          1000),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 1))),
-          1000),
-      StepsData(
-          DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 0))),
-          1000),
-    ];
+    for (MapEntry entry in dataSteps.entries) {
+      chartData.add(StepsData(
+          DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
+    }
+    chartData.sort((a, b) => a.date.compareTo(b.date));
+    if (chartData.length > 7) {
+      chartData.removeRange(0, chartData.length - 7);
+    }
     return chartData;
   }
 }
@@ -131,6 +96,6 @@ class _StatisticPageState extends State<StatisticPage> {
 class StepsData {
   StepsData(this.date, this.steps);
 
-  final String date;
+  final DateTime date;
   final int steps;
 }

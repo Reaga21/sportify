@@ -12,3 +12,7 @@ String yesterday() {
 String nowFormated() {
   return DateFormat('HH:mm:ss dd.MM.yyyy').format(DateTime.now());
 }
+
+String shortDate(DateTime date){
+  return DateFormat('dd.MM.yyyy').format(date);
+}
