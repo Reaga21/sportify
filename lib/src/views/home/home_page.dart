@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
+import 'package:sportify/src/views/home/tabs/profile/profile_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
 import 'package:sportify/src/views/login/login_page.dart';
@@ -84,6 +85,7 @@ class _HomePageState extends State<HomePage> {
       ),
       const FriendsPage(),
       const StatisticPage(),
+      const ProfilePage(),
     ];
   }
 
@@ -145,6 +147,9 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.bar_chart),
                 label: 'Statistics',
+              ),BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle),
+                label: 'Profile',
               ),
             ],
           ),

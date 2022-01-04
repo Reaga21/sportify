@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/models/step_model.dart';
@@ -51,7 +53,14 @@ class RankingList extends StatelessWidget {
 
   List<Widget> buildList(Map<String, StepModel> steps) {
     List<Widget> tiles = [];
-    steps.forEach((uid, steps) {
+
+    var sortedKeys = steps.keys.toList(growable: false)
+      ..sort((k1, k2) =>
+          steps[k1]!.getTodaySteps().compareTo(steps[k2]!.getTodaySteps()));
+    LinkedHashMap sortedSteps = LinkedHashMap.fromIterable(sortedKeys.reversed,
+        key: (k) => k, value: (k) => steps[k]);
+
+    sortedSteps.forEach((uid, steps) {
       tiles.add(Card(
         child: ListTile(
           title: Text("${steps.getTodaySteps()} Steps today"),
@@ -72,10 +81,9 @@ class RankingList extends StatelessWidget {
 
   Future<StepModel> getSteps(String uid) async {
     final CollectionReference steps =
-    FirebaseFirestore.instance.collection('steps');
+        FirebaseFirestore.instance.collection('steps');
     StepModel stepModel = StepModel.fromJson(
         (await steps.doc(uid).get()).data() as Map<String, dynamic>);
     return stepModel;
   }
-
 }

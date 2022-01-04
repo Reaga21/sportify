@@ -23,11 +23,14 @@ class StepBox extends StatelessWidget {
                     Center(
                       child: Text(
                         context.watch<StepModel>().getTodaySteps().toString(),
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 70),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 70),
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 48,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
