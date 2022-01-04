@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
     return MultiProvider(
       providers: [
         StreamProvider<UserModel>(
-            create: (_) => getUser(),
+            create: (_) => getUserStream(),
             initialData: UserModel("", "", [], [], []))
       ],
       child: WithForegroundTask(
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Stream<UserModel> getUser() {
+  Stream<UserModel> getUserStream() {
     return FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
