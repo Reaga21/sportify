@@ -62,9 +62,12 @@ class RankingList extends StatelessWidget {
     return tiles;
   }
 
-  Future<Map<String, StepModel>> getFriends(List<String> uids) async {
-    var result = {for (String uid in uids) uid: await getSteps(uid)};
-    return result;
+  Stream<Map<String, StepModel>> getFriendsStream(List<String> uids) async* {
+    while (true) {
+      var result = {for (String uid in uids) uid: await getSteps(uid)};
+      yield result;
+      await Future.delayed(const Duration(seconds: 15));
+    }
   }
 
   Future<StepModel> getSteps(String uid) async {
@@ -75,11 +78,4 @@ class RankingList extends StatelessWidget {
     return stepModel;
   }
 
-  Stream<Map<String, StepModel>> getFriendsStream(List<String> uids) async* {
-    while (true) {
-      var result = {for (String uid in uids) uid: await getSteps(uid)};
-      yield result;
-      await Future.delayed(const Duration(seconds: 15));
-    }
-  }
 }
