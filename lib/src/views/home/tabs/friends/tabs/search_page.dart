@@ -37,11 +37,10 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
               margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               padding: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
               decoration: BoxDecoration(
@@ -50,12 +49,9 @@ class _SearchPageState extends State<SearchPage> {
               ),
               child: searchBar(),
             ),
-          ),
-          Expanded(
-            flex: 6,
-            child: resultSet(),
-          ),
-        ],
+            resultSet(),
+          ],
+        ),
       ),
     );
   }
@@ -84,7 +80,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget resultSet() {
     if (friendsSuggestions.isNotEmpty) {
-      return ListView(
+      return Column(
         children: friendsSuggestions
             .map(
               (doc) => ListTile(

@@ -89,14 +89,14 @@ class _HomePageState extends State<HomePage> {
 
   void _initForegroundTask() {
     FlutterForegroundTask.init(
-      androidNotificationOptions: const AndroidNotificationOptions(
+      androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'notification_channel_id',
         channelName: 'Foreground Notification',
         channelDescription:
             'This notification appears when the foreground service is running.',
         channelImportance: NotificationChannelImportance.LOW,
         priority: NotificationPriority.LOW,
-        iconData: NotificationIconData(
+        iconData: const NotificationIconData(
           resType: ResourceType.mipmap,
           resPrefix: ResourcePrefix.ic,
           name: 'launcher',
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
     return MultiProvider(
       providers: [
         StreamProvider<UserModel>(
-            create: (_) => getUser(),
+            create: (_) => getUserStream(),
             initialData: UserModel("", "", [], [], []))
       ],
       child: WithForegroundTask(
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Stream<UserModel> getUser() {
+  Stream<UserModel> getUserStream() {
     return FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -195,6 +195,9 @@ class FirstTaskHandler implements TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp) async {}
+
+  @override
+  void onButtonPressed(String id) {}
 }
 
 void startCallback() {

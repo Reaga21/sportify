@@ -12,8 +12,8 @@ class RankingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserModel myUser = context.watch<UserModel>();
-    return FutureBuilder<Map<String, StepModel>>(
-      future: getFriends(myUser.friends),
+    return StreamBuilder<Map<String, StepModel>>(
+      stream: getFriendsStream(myUser.friends),
       builder: (BuildContext context,
           AsyncSnapshot<Map<String, StepModel>> snapshot) {
         List<Widget> children;
@@ -42,7 +42,9 @@ class RankingList extends StatelessWidget {
           ];
         }
         return Row(
-            mainAxisAlignment: MainAxisAlignment.center, children: children);
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: children,
+        );
       },
     );
   }
@@ -60,16 +62,20 @@ class RankingList extends StatelessWidget {
     return tiles;
   }
 
-  Future<Map<String, StepModel>> getFriends(List<String> uids) async {
-    var result = {for (String uid in uids) uid: await getSteps(uid)};
-    return result;
+  Stream<Map<String, StepModel>> getFriendsStream(List<String> uids) async* {
+    while (true) {
+      var result = {for (String uid in uids) uid: await getSteps(uid)};
+      yield result;
+      await Future.delayed(const Duration(seconds: 15));
+    }
   }
 
   Future<StepModel> getSteps(String uid) async {
     final CollectionReference steps =
-        FirebaseFirestore.instance.collection('steps');
+    FirebaseFirestore.instance.collection('steps');
     StepModel stepModel = StepModel.fromJson(
         (await steps.doc(uid).get()).data() as Map<String, dynamic>);
     return stepModel;
   }
+
 }

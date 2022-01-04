@@ -36,7 +36,7 @@ dependencies:
   firebase_auth: ^1.2.0
   pedometer: ^3.0.0
   jiffy: ^4.1.0
-  flutter_foreground_task: ^3.0.0
+  flutter_foreground_task: ^3.5.2
   provider: ^6.0.1
   cloud_firestore: ^2.5.3
   permission_handler: ^8.3.0
