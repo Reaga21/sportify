@@ -34,25 +34,6 @@ class _StatisticPageState extends State<StatisticPage> {
     return dataSteps;
   }
 
-
-
-  /* final List<String> days7 = [
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 6))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 5))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 4))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 3))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 2))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(const Duration(days: 1))),
-    DateFormat('yyyy-MM-dd')
-        .format(DateTime.now()),
-  ];*/
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,17 +55,7 @@ class _StatisticPageState extends State<StatisticPage> {
               textAlign: TextAlign.center,
             ),
           ),
-          SfCartesianChart(
-            series: <ChartSeries>[
-              BarSeries<StepsData, dynamic>(
-                  dataSource: _chartData,
-                  xValueMapper: (StepsData data,_) => data.date,
-                  yValueMapper: (StepsData data,_) => data.steps),
-            ],
-            primaryXAxis: CategoryAxis(),
-          ),
-
-          /*FutureBuilder(
+          FutureBuilder(
               future: readData(),
               builder: (BuildContext context,
                   AsyncSnapshot<Map<String, dynamic>> dataSteps) {
@@ -102,28 +73,32 @@ class _StatisticPageState extends State<StatisticPage> {
                 // }
                 //Map<String, dynamic> realData = dataSteps.data!;
                 return
-                BarChart(BarChartData(
-                  alignment: BarChartAlignment.center,
-                  maxY:40000,
-                  minY: 0,
-                  groupsSpace: 12,
-                  barTouchData: BarTouchData(enabled: true),
-                ),); //Initialize the chart widget
+                  SfCartesianChart(
+                      series: <ChartSeries>[
+                        BarSeries<StepsData, dynamic>(
+                            dataSource: _chartData,
+                            xValueMapper: (StepsData data,_) => data.date,
+                            yValueMapper: (StepsData data,_) => data.steps),
+                      ],
+                      primaryXAxis: CategoryAxis(),
+                      primaryYAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift)
+                  );
 
               }
 
-          )*/
+          )
         ],
       ),
     );
   }
 
   List<StepsData> getChartData() {
+
     final List<StepsData> chartData = [
       StepsData(
           DateFormat('yyyy-MM-dd')
-              .format(DateTime.now().subtract(const Duration(days: 6))),
-          1000),
+              .format(DateTime.now().subtract(const Duration(days: 6))), 1000
+          ),
       StepsData(
           DateFormat('yyyy-MM-dd')
               .format(DateTime.now().subtract(const Duration(days: 5))),
