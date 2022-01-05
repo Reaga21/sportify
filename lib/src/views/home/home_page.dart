@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   late StreamSubscription<User?> _authListener;
   ReceivePort? _receivePort;
   int _counter = 0;
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   List<Widget> _pages = [];
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -128,10 +128,10 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           body: IndexedStack(
             children: _pages,
-            index: _selectedIndex,
+            index: selectedIndex,
           ),
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
+            currentIndex: selectedIndex,
             onTap: changeTab,
             selectedItemColor: Theme.of(context).colorScheme.primary,
             unselectedItemColor: Theme.of(context).colorScheme.secondary,
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
 
   void changeTab(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 

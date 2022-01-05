@@ -16,7 +16,7 @@ class _MyLoginState extends State<MyLogin> {
   PermissionStatus _permissionStatus = PermissionStatus.denied;
   final Permission _permission = Permission.activityRecognition;
 
-  final _emailInput = TextEditingController(text: 'andrea.robitzsch@gmail.com');
+  final _emailInput = TextEditingController(text: 'karl@gmail.de');
   final _passInput = TextEditingController(text: '123456');
 
   @override
