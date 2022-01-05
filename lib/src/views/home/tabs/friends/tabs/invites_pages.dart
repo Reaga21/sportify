@@ -75,6 +75,7 @@ class _InvitesPageState extends State<InvitesPage> {
         child: Card(
             child: ListTile(
           leading: CircleAvatar(
+            backgroundColor: Colors.transparent,
             backgroundImage: MemoryImage(base64Decode(item.get("pic"))),
           ),
           title: Text(item.get("name")),

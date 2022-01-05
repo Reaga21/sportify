@@ -85,6 +85,7 @@ class _SearchPageState extends State<SearchPage> {
             .map(
               (doc) => ListTile(
                 leading: CircleAvatar(
+                  backgroundColor: Colors.transparent,
                   backgroundImage: MemoryImage(base64Decode(doc.get("pic"))),
                 ),
                 title: Text(doc.get("name")),
