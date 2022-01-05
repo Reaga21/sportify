@@ -16,3 +16,7 @@ String nowFormated() {
 String shortDate(DateTime date){
   return DateFormat('dd.MM.yyyy').format(date);
 }
+
+String monthYear(DateTime date){
+  return DateFormat('MM.yyyy').format(date);
+}

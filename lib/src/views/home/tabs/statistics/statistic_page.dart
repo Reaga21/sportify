@@ -81,6 +81,18 @@ class _StatisticPageState extends State<StatisticPage> {
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
                                 edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                        SfCartesianChart(
+                            series: <ChartSeries>[
+                              BarSeries<StepsData, dynamic>(
+                                  dataSource: getChartDataMonthly(dataSteps.data!),
+                                  xValueMapper: (StepsData data, _) =>
+                                      monthYear(data.date),
+                                  yValueMapper: (StepsData data, _) => data.steps),
+                            ],
+                            primaryXAxis: CategoryAxis(),
+                            primaryYAxis: NumericAxis(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+
                       ],
                     );
                   })
@@ -109,6 +121,7 @@ class _StatisticPageState extends State<StatisticPage> {
     final List<StepsData> chartData = [];
 
     for (MapEntry entry in dataSteps.entries) {
+
       chartData.add(StepsData(
           DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
     }
@@ -118,6 +131,32 @@ class _StatisticPageState extends State<StatisticPage> {
     }
     return chartData;
   }
+  List<StepsData> getChartDataMonthly(Map<String, dynamic> dataSteps) {
+    final List<StepsData> chartData = [];
+    int aggregatedSteps = 0;
+    int count = 0;
+
+    for (MapEntry entry in dataSteps.entries)
+
+    {
+      if(DateTime.parse(entry.key).isSameYearAndMonth(DateTime.parse(entry.key).add(const Duration(days:1)))) {
+       aggregatedSteps += int.parse(entry.value['stepsDay']!.toString());
+       ++count;
+        chartData.add(StepsData(
+            DateTime(DateTime.parse(entry.key).year, DateTime.parse(entry.key).month), aggregatedSteps~/count)); //DATUM
+      }
+    }
+    chartData.sort((a, b) => a.date.compareTo(b.date));
+    if (chartData.length > 30) {
+      chartData.removeRange(0, chartData.length - 30);
+    }
+    return chartData;
+  }
+// gruppieren der Daten nach Jahr  und dann nach Monat
+
+// Datetime hat month property und year property
+// groupierte Liste erstellen
+
 
 }
 
@@ -126,4 +165,11 @@ class StepsData {
 
   final DateTime date;
   final int steps;
+}
+extension DateTimeComparison on DateTime{
+  bool isSameYearAndMonth(DateTime other){
+    return ((year == other.year) && (month == other.month));
+  }
+
+
 }
