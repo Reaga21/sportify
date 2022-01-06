@@ -35,14 +35,14 @@ class ChartMonthlyAverage extends StatelessWidget {
             Card(
               child: SfCartesianChart(
                 title: ChartTitle(
-                    text: 'Monthly Overview Steps (Average)'),
+                    text: 'Monthly (Average)'),
                 series: <ChartSeries>[
                   BarSeries<StepsData, dynamic>(
                       color: Color(0xFFDE6482),
                       dataSource:
                       getChartDataMonthly(dataSteps.data!),
                       xValueMapper: (StepsData data, _) =>
-                          shortDate(data.date),
+                          monthYear(data.date),
                       yValueMapper: (StepsData data, _) =>
                       data.steps),
                 ],

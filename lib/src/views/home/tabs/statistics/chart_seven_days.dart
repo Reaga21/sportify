@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/models/steps_data.dart';
-import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:sportify/src/util/dates.dart';
 
@@ -34,7 +33,7 @@ class ChartSevenDays extends StatelessWidget {
           return
               Card(
                 child: SfCartesianChart(
-                  title: ChartTitle(text: 'Overview Steps (Seven Days)'),
+                  title: ChartTitle(text: 'Overview (Seven Days)'),
                   series: <ChartSeries>[
                     BarSeries<StepsData, dynamic>(
                         color: Color(0xFFDE6482),
