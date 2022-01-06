@@ -90,10 +90,12 @@ class _InvitesPageState extends State<InvitesPage> {
                 onPressed: () async {
                   users.doc(item.id).update({
                     'pendingInv': FieldValue.arrayRemove([uid]),
+                    'pendingReq': FieldValue.arrayRemove([uid]),
                     'friends': FieldValue.arrayUnion([uid])
                   });
                   users.doc(uid).update({
                     'pendingReq': FieldValue.arrayRemove([item.id]),
+                    'pendingInv': FieldValue.arrayRemove([item.id]),
                     'friends': FieldValue.arrayUnion([item.id])
                   });
                   _deleteItem(index);
