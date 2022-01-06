@@ -7,12 +7,12 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:sportify/src/models/user_model.dart';
 
-class ProfileWidget extends StatelessWidget {
+class ProfilePicWidget extends StatelessWidget {
   final picker = ImagePicker();
   final users = FirebaseFirestore.instance.collection('users');
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  ProfileWidget({Key? key}) : super(key: key);
+  ProfilePicWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,17 +83,20 @@ class ProfileWidget extends StatelessWidget {
                       );
                     });
               },
-              child: const Icon(Icons.edit, size: 26, color: Colors.white)),
+              child: const Icon(Icons.photo_camera,
+                  size: 26, color: Colors.white)),
         ));
   }
 
   Future<String> _imgFromCamera() async {
-    final imageFile = await picker.pickImage(source: ImageSource.camera);
+    final imageFile = await picker.pickImage(
+        source: ImageSource.camera, maxHeight: 512, maxWidth: 512);
     return _base64img(imageFile!);
   }
 
   Future<String> _imgFromGallery() async {
-    final imageFile = await picker.pickImage(source: ImageSource.gallery);
+    final imageFile = await picker.pickImage(
+        source: ImageSource.gallery, maxHeight: 512, maxWidth: 512);
     return _base64img(imageFile!);
   }
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/views/home/tabs/profile/profile_widget.dart';
 import 'package:provider/provider.dart';
@@ -8,25 +9,35 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final account = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .primary,
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
         children: [
-          ProfileWidget(),
+          ProfilePicWidget(),
           const SizedBox(
             height: 24,
           ),
           buildName(context.watch<UserModel>()),
+          const SizedBox(
+            height: 48,
+          ),
+          buildEmail(account!),
         ],
       ),
     );
   }
 
-  Widget buildName(UserModel user) => Column(
+  Widget buildName(UserModel user) =>
+      Column(
         children: [
           Text(
             user.name,
@@ -35,4 +46,15 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 4),
         ],
       );
+
+  Widget buildEmail(User user) {
+    return Column(
+      children: [
+        Text(
+          user.email.toString(),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        )
+      ],
+    );
+  }
 }
