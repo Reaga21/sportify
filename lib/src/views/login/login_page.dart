@@ -42,128 +42,85 @@ class _MyLoginState extends State<MyLogin> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
+
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Text(
-                  "Login",
-                  style: Theme.of(context).textTheme.headline1,
-                ),
-              ),
-              const SizedBox(height: 50),
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: _emailInput,
-                  decoration: const InputDecoration(hintText: 'Email'),
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: _passInput,
-                  obscureText: true,
-                  decoration: const InputDecoration(hintText: 'Password'),
-                ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              ElevatedButton(
-                child: const Text('Sign in with Email'),
-                onPressed: () {
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: _emailInput.text, password: _passInput.text)
-                      .then(
-                    (_) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const LoadingPage()));
-                    },
-                  ).catchError((error) {
-                    if (error.code == 'user-not-found') {
-                      _showDialogNoEmail();
-                    } else if (error.code == 'wrong-password') {
-                      _showDialogWrongPassword();
-                    }
-                  });
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                child: const Text('Create an Account'),
-                onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const Registration()));
-                },
-              ),
-            ],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+          Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Text(
+            "Login",
+            style: Theme.of(context).textTheme.headline1,
           ),
-        ),
       ),
-    );
-  }
-
-  Future<void> _showDialogNoEmail() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Email nicht gefunden!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text(
-                    'Zur eingegebenen Email Adresse konnte kein Account gefunden werden.'),
-              ],
-            ),
+      const SizedBox(height: 50),
+      SizedBox(
+          width: 250,
+          child: TextField(
+            controller: _emailInput,
+            decoration: const InputDecoration(hintText: 'Email'),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Login'),
-              onPressed: () {
-                Navigator.of(context).pop();
+      ),
+      const SizedBox(
+          height: 25,
+      ),
+      SizedBox(
+          width: 250,
+          child: TextField(
+            controller: _passInput,
+            obscureText: true,
+            decoration: const InputDecoration(hintText: 'Password'),
+          ),
+      ),
+      const SizedBox(
+          height: 50,
+      ),
+      ElevatedButton(
+          child: const Text('Sign in with Email'),
+          onPressed: () {
+            FirebaseAuth.instance
+                .signInWithEmailAndPassword(email: _emailInput.text, password: _passInput.text).then(
+                  (_) {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const LoadingPage()));
               },
-            ),
-            TextButton(
-              child: const Text('Create an Account'),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const Registration()));
-              },
-            ),
+            ).catchError((error) {
+              if(error.code == 'user-not-found'){
+                _showDialogWrongEmPW();
+              }else if(error.code == 'wrong-password'){
+                _showDialogWrongEmPW();
+              }
+            });
+          },
+      ),
+      const SizedBox(
+          height: 20,
+      ),
+      ElevatedButton(
+          child: const Text('Create an Account'),
+          onPressed: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const Registration()));
+          },
+      ),
           ],
-        );
-      },
-    );
+      ),
+        ),
+    ),);
   }
 
-  Future<void> _showDialogWrongPassword() async {
+  Future<void> _showDialogWrongEmPW() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Wrong Password!'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Das eingegebene Passwort ist inkorrekt!'),
-              ],
-            ),
-          ),
+          title: const Text('Email or Password are wrong!'),
           actions: <Widget>[
             TextButton(
               child: const Text('Login'),
@@ -173,10 +130,13 @@ class _MyLoginState extends State<MyLogin> {
             ),
             TextButton(
               child: const Text('Create an Account'),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const Registration()));
-              },
+
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const Registration()));
+            },
             ),
           ],
         );
