@@ -43,6 +43,8 @@ void main() async {
                 fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white),
             headline3: TextStyle(
                 fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+            headline4: TextStyle(
+                fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         home: user == null ? const MyLogin() : const LoadingPage(),
