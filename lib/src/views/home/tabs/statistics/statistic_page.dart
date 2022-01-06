@@ -59,6 +59,7 @@ class _StatisticPageState extends State<StatisticPage> {
                       children: [
                         Card(
                           child: SfCartesianChart(
+                            title: ChartTitle(text: 'Overview Steps (Seven Days)'),
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(color: Color(0xFFDE6482),
                                   dataSource: getChartDataSeven(dataSteps.data!),
@@ -93,35 +94,72 @@ class _StatisticPageState extends State<StatisticPage> {
                         ),
                         Card(
                           child: SfCartesianChart(
-                            series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
-                                  dataSource: getChartDataThirty(dataSteps.data!),
-                                  xValueMapper: (StepsData data, _) =>
-                                      shortDate(data.date),
-                                  yValueMapper: (StepsData data, _) =>
-                                      data.steps),
-                            ],
-                            primaryXAxis: CategoryAxis(),
-                            primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift),
-                            tooltipBehavior: TooltipBehavior(enable: true),
+                            title: ChartTitle(text: 'Overview Steps (Thirty Days)'),
+                    series: <ChartSeries>[
+                    BarSeries<StepsData, dynamic>(color: Color(0xFFDE6482),
+                    dataSource: getChartDataThirty(dataSteps.data!),
+                    xValueMapper: (StepsData data, _) =>
+                    shortDate(data.date),
+                    yValueMapper: (StepsData data, _) =>
+                    data.steps),
+                    ],
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                    edgeLabelPlacement: EdgeLabelPlacement.shift),
+                    tooltipBehavior: TooltipBehavior(
+                    color: Theme.of(context).colorScheme.primary,
+                    enable: true,
+                    // Templating the tooltip
+                    builder: (dynamic data, dynamic point, dynamic series,
+                    int pointIndex, int seriesIndex) {
+                    return ClipRRect(borderRadius: BorderRadius.circular(200.0),
+                    child: Container(color: Theme.of(context).colorScheme.primary,
+
+                    child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                    'Steps : ${(data as StepsData).steps}'
+                    ),
+                    )
+                    ),
+                    );
+                    }
+                    ),
                           ),
                         ),
                         Card(
                           child: SfCartesianChart(
+                            title: ChartTitle(text: 'Monthly Overview Steps (Average)'),
                             series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
-                                  dataSource:
-                                      getChartDataMonthly(dataSteps.data!),
+                              BarSeries<StepsData, dynamic>(color: Color(0xFFDE6482),
+                                  dataSource: getChartDataMonthly(dataSteps.data!),
                                   xValueMapper: (StepsData data, _) =>
-                                      monthYear(data.date),
+                                      shortDate(data.date),
                                   yValueMapper: (StepsData data, _) =>
-                                      data.steps),
+                                  data.steps),
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
                                 edgeLabelPlacement: EdgeLabelPlacement.shift),
-                            tooltipBehavior: TooltipBehavior(enable: true),
+                            tooltipBehavior: TooltipBehavior(
+                                color: Theme.of(context).colorScheme.primary,
+                                enable: true,
+                                // Templating the tooltip
+                                builder: (dynamic data, dynamic point, dynamic series,
+                                    int pointIndex, int seriesIndex) {
+                                  return ClipRRect(borderRadius: BorderRadius.circular(200.0),
+                                    child: Container(color: Theme.of(context).colorScheme.primary,
+
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                              'Steps (average) : ${(data as StepsData).steps}'
+                                          ),
+                                        )
+                                    ),
+                                  );
+                                }
+                            ),
                           ),
                         ),
                       ],
