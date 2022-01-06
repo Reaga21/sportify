@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/models/user_model.dart';
 
 class RankingTile extends StatefulWidget {
   final String uid;
@@ -24,10 +25,7 @@ class _RankingTileState extends State<RankingTile> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        trailing: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          backgroundImage: MemoryImage(base64Decode(widget.pic)),
-        ),
+        trailing: getPic(),
         title: getStepMonitor(),
         subtitle: Text(widget.name),
       ),
@@ -39,6 +37,39 @@ class _RankingTileState extends State<RankingTile> {
         .collection("steps")
         .doc(widget.uid)
         .snapshots();
+  }
+
+  Stream<String> getPicStream() {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(widget.uid)
+        .snapshots()
+        .map((data) {
+      final user = UserModel.fromJson(data.data()!);
+      return user.pic;
+    });
+  }
+
+  Widget getPic() {
+    return StreamBuilder<String>(
+        stream: getPicStream(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasError) {
+            return CircleAvatar(
+                backgroundColor: Colors.transparent,
+                backgroundImage: MemoryImage(base64Decode(widget.pic)));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircleAvatar(
+                backgroundColor: Colors.transparent,
+                backgroundImage: MemoryImage(base64Decode(widget.pic)));
+          } else {
+            final newPic = snapshot.data!;
+            return CircleAvatar(
+                backgroundColor: Colors.transparent,
+                backgroundImage: MemoryImage(base64Decode(newPic)));
+          }
+        });
   }
 
   Widget getStepMonitor() {
