@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:sportify/src/util/dates.dart';
 
-
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key}) : super(key: key);
 
@@ -31,8 +30,7 @@ class _StatisticPageState extends State<StatisticPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-
-        child:SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -59,40 +57,73 @@ class _StatisticPageState extends State<StatisticPage> {
                     }
                     return Column(
                       children: [
-                        SfCartesianChart(
+                        Card(
+                          child: SfCartesianChart(
                             series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
+                              BarSeries<StepsData, dynamic>(color: Color(0xFFDE6482),
                                   dataSource: getChartDataSeven(dataSteps.data!),
                                   xValueMapper: (StepsData data, _) =>
                                       shortDate(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
+                                  yValueMapper: (StepsData data, _) =>
+                                      data.steps),
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
-                        SfCartesianChart(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                            tooltipBehavior: TooltipBehavior(
+                              color: Theme.of(context).colorScheme.primary,
+                                enable: true,
+                                // Templating the tooltip
+                                builder: (dynamic data, dynamic point, dynamic series,
+                                    int pointIndex, int seriesIndex) {
+                                  return ClipRRect(borderRadius: BorderRadius.circular(200.0),
+                                    child: Container(color: Theme.of(context).colorScheme.primary,
+
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                              'Steps : ${(data as StepsData).steps}'
+                                          ),
+                                        )
+                                    ),
+                                  );
+                                }
+                            ),
+                          ),
+                        ),
+                        Card(
+                          child: SfCartesianChart(
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(
                                   dataSource: getChartDataThirty(dataSteps.data!),
                                   xValueMapper: (StepsData data, _) =>
                                       shortDate(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
+                                  yValueMapper: (StepsData data, _) =>
+                                      data.steps),
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
-                        SfCartesianChart(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                            tooltipBehavior: TooltipBehavior(enable: true),
+                          ),
+                        ),
+                        Card(
+                          child: SfCartesianChart(
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(
-                                  dataSource: getChartDataMonthly(dataSteps.data!),
+                                  dataSource:
+                                      getChartDataMonthly(dataSteps.data!),
                                   xValueMapper: (StepsData data, _) =>
                                       monthYear(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
+                                  yValueMapper: (StepsData data, _) =>
+                                      data.steps),
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
-
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                            tooltipBehavior: TooltipBehavior(enable: true),
+                          ),
+                        ),
                       ],
                     );
                   })
@@ -121,7 +152,6 @@ class _StatisticPageState extends State<StatisticPage> {
     final List<StepsData> chartData = [];
 
     for (MapEntry entry in dataSteps.entries) {
-
       chartData.add(StepsData(
           DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
     }
@@ -131,19 +161,21 @@ class _StatisticPageState extends State<StatisticPage> {
     }
     return chartData;
   }
+
   List<StepsData> getChartDataMonthly(Map<String, dynamic> dataSteps) {
     final List<StepsData> chartData = [];
     int aggregatedSteps = 0;
     int count = 0;
 
-    for (MapEntry entry in dataSteps.entries)
-
-    {
-      if(DateTime.parse(entry.key).isSameYearAndMonth(DateTime.parse(entry.key).add(const Duration(days:1)))) {
-       aggregatedSteps += int.parse(entry.value['stepsDay']!.toString());
-       ++count;
+    for (MapEntry entry in dataSteps.entries) {
+      if (DateTime.parse(entry.key).isSameYearAndMonth(
+          DateTime.parse(entry.key).add(const Duration(days: 1)))) {
+        aggregatedSteps += int.parse(entry.value['stepsDay']!.toString());
+        ++count;
         chartData.add(StepsData(
-            DateTime(DateTime.parse(entry.key).year, DateTime.parse(entry.key).month), aggregatedSteps~/count)); //DATUM
+            DateTime(DateTime.parse(entry.key).year,
+                DateTime.parse(entry.key).month),
+            aggregatedSteps ~/ count)); //DATUM
       }
     }
     chartData.sort((a, b) => a.date.compareTo(b.date));
@@ -157,7 +189,6 @@ class _StatisticPageState extends State<StatisticPage> {
 // Datetime hat month property und year property
 // groupierte Liste erstellen
 
-
 }
 
 class StepsData {
@@ -166,10 +197,9 @@ class StepsData {
   final DateTime date;
   final int steps;
 }
-extension DateTimeComparison on DateTime{
-  bool isSameYearAndMonth(DateTime other){
+
+extension DateTimeComparison on DateTime {
+  bool isSameYearAndMonth(DateTime other) {
     return ((year == other.year) && (month == other.month));
   }
-
-
 }
