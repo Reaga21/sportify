@@ -43,6 +43,9 @@ class _HomePageState extends State<HomePage> {
 
       _receivePort?.listen((event) async {
         context.read<StepModel>().updateTodaySteps(event.steps);
+        FlutterForegroundTask.updateService(
+            notificationText:
+                "Today's steps: ${context.read<StepModel>().getTodaySteps()}");
         // only update after 50 new steps counted
         if (_counter > 20) {
           await _updateSteps(context);
@@ -147,7 +150,8 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.bar_chart),
                 label: 'Statistics',
-              ),BottomNavigationBarItem(
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Profile',
               ),
