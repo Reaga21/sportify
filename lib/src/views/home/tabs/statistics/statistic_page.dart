@@ -8,6 +8,7 @@ import 'package:sportify/src/util/dates.dart';
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key}) : super(key: key);
 
+
   @override
   State<StatisticPage> createState() => _StatisticPageState();
 }
@@ -60,6 +61,7 @@ class _StatisticPageState extends State<StatisticPage> {
                     return Column(
                       children: [
                         SfCartesianChart(
+                            title: ChartTitle(text: 'Overview Steps (Last Seven Days)'),
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(
                                   dataSource: getChartDataSeven(dataSteps.data!),
@@ -69,8 +71,11 @@ class _StatisticPageState extends State<StatisticPage> {
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                        ),
                         SfCartesianChart(
+                            title: ChartTitle(text: 'Overview Steps (Last Thirty Days)'),
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(
                                   dataSource: getChartDataThirty(dataSteps.data!),
@@ -80,8 +85,11 @@ class _StatisticPageState extends State<StatisticPage> {
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                        ),
                         SfCartesianChart(
+                            title: ChartTitle(text: 'Monthly Overview Steps (average)'),
                             series: <ChartSeries>[
                               BarSeries<StepsData, dynamic>(
                                   dataSource: getChartDataMonthly(dataSteps.data!),
@@ -91,7 +99,10 @@ class _StatisticPageState extends State<StatisticPage> {
                             ],
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                                edgeLabelPlacement: EdgeLabelPlacement.shift),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                        ),
+
 
                       ],
                     );
@@ -152,10 +163,6 @@ class _StatisticPageState extends State<StatisticPage> {
     }
     return chartData;
   }
-// gruppieren der Daten nach Jahr  und dann nach Monat
-
-// Datetime hat month property und year property
-// groupierte Liste erstellen
 
 
 }
