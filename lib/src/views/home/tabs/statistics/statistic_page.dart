@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+import 'package:sportify/src/util/dates.dart';
+
 
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key}) : super(key: key);
@@ -22,14 +23,6 @@ class _StatisticPageState extends State<StatisticPage> {
     return dataSteps;
   }
 
-  final List<_SalesData> data = [
-    _SalesData('Jan', 35),
-    _SalesData('Feb', 28),
-    _SalesData('Mar', 34),
-    _SalesData('Apr', 32),
-    _SalesData('May', 40)
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,88 +30,146 @@ class _StatisticPageState extends State<StatisticPage> {
         title: const Text("Sportify"),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Text(
-              "Statistics",
-              style: TextStyle(
-                fontSize: 30,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          FutureBuilder(
-            future: readData(),
-            builder: (BuildContext context,
-                AsyncSnapshot<Map<String, dynamic>> dataSteps) {
-              if (dataSteps.hasError) {
-                return const Text("Ein Problem ist aufgetreten");
-              }
-              if (!dataSteps.hasData) {
-                return const CircularProgressIndicator();
-              }
+      body: Center(
 
-              //dataSteps.data!['keyword']; // so kommt man an die Daten ran
-              // for(MapEntry entry in dataSteps.data!.entries) {
-              // entry.key //DATUM
-              //  entry.value //STEP
-              // }
-              //Map<String, dynamic> realData = dataSteps.data!;
-              return //Initialize the chart widget
-                  SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                // Chart title
-                title: ChartTitle(text: 'Half yearly sales analysis'),
-                // Enable legend
-                legend: Legend(isVisible: true),
-                // Enable tooltip
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: <ChartSeries<_SalesData, String>>[
-                  LineSeries<_SalesData, String>(
-                    dataSource:
-                        data, // keine Forschleifen verwendbar -- entsprechende Funktionalitäten in einer Funktion auslagern
-                    xValueMapper: (_SalesData sales, _) => sales.year,
-                    yValueMapper: (_SalesData sales, _) => sales.sales,
-                    name: 'Sales',
-                    // Enable data label
-                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+        child:SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  "Statistics",
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                ],
-              );
-            },
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              //Initialize the spark charts widget
-              child: SfSparkLineChart.custom(
-                //Enable the trackball
-                trackball: const SparkChartTrackball(
-                    activationMode: SparkChartActivationMode.tap),
-                //Enable marker
-                marker: const SparkChartMarker(
-                    displayMode: SparkChartMarkerDisplayMode.all),
-                //Enable data label
-                labelDisplayMode: SparkChartLabelDisplayMode.all,
-                xValueMapper: (int index) => data[index].year,
-                yValueMapper: (int index) => data[index].sales,
-                dataCount: 5,
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
+              FutureBuilder(
+                  future: readData(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<Map<String, dynamic>> dataSteps) {
+                    if (dataSteps.hasError) {
+                      return const Text("A problem has occurred!");
+                    }
+                    if (!dataSteps.hasData) {
+                      return const CircularProgressIndicator();
+                    }
+                    return Column(
+                      children: [
+                        SfCartesianChart(
+                            series: <ChartSeries>[
+                              BarSeries<StepsData, dynamic>(
+                                  dataSource: getChartDataSeven(dataSteps.data!),
+                                  xValueMapper: (StepsData data, _) =>
+                                      shortDate(data.date),
+                                  yValueMapper: (StepsData data, _) => data.steps),
+                            ],
+                            primaryXAxis: CategoryAxis(),
+                            primaryYAxis: NumericAxis(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                        SfCartesianChart(
+                            series: <ChartSeries>[
+                              BarSeries<StepsData, dynamic>(
+                                  dataSource: getChartDataThirty(dataSteps.data!),
+                                  xValueMapper: (StepsData data, _) =>
+                                      shortDate(data.date),
+                                  yValueMapper: (StepsData data, _) => data.steps),
+                            ],
+                            primaryXAxis: CategoryAxis(),
+                            primaryYAxis: NumericAxis(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+                        SfCartesianChart(
+                            series: <ChartSeries>[
+                              BarSeries<StepsData, dynamic>(
+                                  dataSource: getChartDataMonthly(dataSteps.data!),
+                                  xValueMapper: (StepsData data, _) =>
+                                      monthYear(data.date),
+                                  yValueMapper: (StepsData data, _) => data.steps),
+                            ],
+                            primaryXAxis: CategoryAxis(),
+                            primaryYAxis: NumericAxis(
+                                edgeLabelPlacement: EdgeLabelPlacement.shift)),
+
+                      ],
+                    );
+                  })
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
+
+  List<StepsData> getChartDataSeven(Map<String, dynamic> dataSteps) {
+    final List<StepsData> chartData = [];
+
+    for (MapEntry entry in dataSteps.entries) {
+      chartData.add(StepsData(
+          DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
+    }
+    chartData.sort((a, b) => a.date.compareTo(b.date));
+    if (chartData.length > 7) {
+      chartData.removeRange(0, chartData.length - 7);
+    }
+    return chartData;
+  }
+
+  List<StepsData> getChartDataThirty(Map<String, dynamic> dataSteps) {
+    final List<StepsData> chartData = [];
+
+    for (MapEntry entry in dataSteps.entries) {
+
+      chartData.add(StepsData(
+          DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
+    }
+    chartData.sort((a, b) => a.date.compareTo(b.date));
+    if (chartData.length > 30) {
+      chartData.removeRange(0, chartData.length - 30);
+    }
+    return chartData;
+  }
+  List<StepsData> getChartDataMonthly(Map<String, dynamic> dataSteps) {
+    final List<StepsData> chartData = [];
+    int aggregatedSteps = 0;
+    int count = 0;
+
+    for (MapEntry entry in dataSteps.entries)
+
+    {
+      if(DateTime.parse(entry.key).isSameYearAndMonth(DateTime.parse(entry.key).add(const Duration(days:1)))) {
+       aggregatedSteps += int.parse(entry.value['stepsDay']!.toString());
+       ++count;
+        chartData.add(StepsData(
+            DateTime(DateTime.parse(entry.key).year, DateTime.parse(entry.key).month), aggregatedSteps~/count)); //DATUM
+      }
+    }
+    chartData.sort((a, b) => a.date.compareTo(b.date));
+    if (chartData.length > 30) {
+      chartData.removeRange(0, chartData.length - 30);
+    }
+    return chartData;
+  }
+// gruppieren der Daten nach Jahr  und dann nach Monat
+
+// Datetime hat month property und year property
+// groupierte Liste erstellen
+
+
 }
 
-class _SalesData {
-  _SalesData(this.year, this.sales);
+class StepsData {
+  StepsData(this.date, this.steps);
 
-  final String year;
-  final double sales;
+  final DateTime date;
+  final int steps;
+}
+extension DateTimeComparison on DateTime{
+  bool isSameYearAndMonth(DateTime other){
+    return ((year == other.year) && (month == other.month));
+  }
+
+
 }
