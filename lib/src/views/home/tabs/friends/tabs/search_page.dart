@@ -115,8 +115,11 @@ class _SearchPageState extends State<SearchPage> {
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text("Search for a friend"),
+        children: [
+          Text(
+            "Search for a friend",
+            style: Theme.of(context).textTheme.headline4,
+          ),
         ],
       );
     }

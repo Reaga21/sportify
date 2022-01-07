@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/models/user_model.dart';
 import 'package:provider/provider.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/ranking_tile.dart';
@@ -19,9 +20,9 @@ class _RankingListState extends State<RankingList> {
   @override
   Widget build(BuildContext context) {
     final UserModel myUser = context.watch<UserModel>();
-    return FutureBuilder<bool>(
+    return FutureBuilder<List<String>>(
       future: getPics(myUser.friends),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
           if (myUser.friends.isEmpty) {
@@ -36,7 +37,7 @@ class _RankingListState extends State<RankingList> {
           } else {
             children = <Widget>[
               Expanded(
-                child: ListView(children: buildList(myUser.friends)),
+                child: ListView(children: buildList(snapshot.data!.reversed)),
               ),
             ];
           }
@@ -55,7 +56,7 @@ class _RankingListState extends State<RankingList> {
     );
   }
 
-  List<Widget> buildList(List<String> uids) {
+  List<Widget> buildList(Iterable<String> uids) {
     List<Widget> tiles = [];
     for (String uid in uids) {
       final pic = profileInfo[uid]?["pic"];
@@ -66,7 +67,7 @@ class _RankingListState extends State<RankingList> {
     return tiles;
   }
 
-  Future<bool> getPics(List<String> uids) async {
+  Future<List<String>> getPics(List<String> uids) async {
     await Future.delayed(const Duration(milliseconds: 500));
     for (String uid in uids) {
       final users = FirebaseFirestore.instance.collection("users");
@@ -75,7 +76,26 @@ class _RankingListState extends State<RankingList> {
       final username = user.get("name");
       profileInfo[uid] = {"pic": pic, "name": username};
     }
-    return Future.value(true);
+    final sortedUids = await sortUidsBySteps(uids);
+    return sortedUids;
+  }
+
+  Future<List<String>> sortUidsBySteps(List<String> uids) async {
+    final stepsWithUid = <List<String>>[];
+    for (String uid in uids) {
+      stepsWithUid.add([uid, (await getSteps(uid)).toString()]);
+    }
+    stepsWithUid.sort((List<String> a, List<String> b) {
+      return int.parse(a[1]).compareTo(int.parse(b[1]));
+    });
+    return stepsWithUid.map((List<String> l) => l[0]).toList();
+  }
+
+  Future<int> getSteps(String uid) async {
+    final res =
+        await FirebaseFirestore.instance.collection("steps").doc(uid).get();
+    StepModel steps = StepModel.fromJson(res.data()!);
+    return steps.getTodaySteps();
   }
 
   final exampleImg =
