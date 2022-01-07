@@ -222,7 +222,7 @@ class _RegistrationState extends State<Registration> {
           title: const Text('Password is too weak!'),
                     actions: <Widget>[
             TextButton(
-              child: const Text('Create an Account'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -242,7 +242,7 @@ class _RegistrationState extends State<Registration> {
           title: const Text('Account already exists!'),
                     actions: <Widget>[
             TextButton(
-              child: const Text('Create an Account'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -123,7 +123,7 @@ class _MyLoginState extends State<MyLogin> {
           title: const Text('Email or Password are wrong!'),
           actions: <Widget>[
             TextButton(
-              child: const Text('Login'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
