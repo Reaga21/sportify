@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sportify/src/models/step_model.dart';
 import 'package:sportify/src/models/user_model.dart';
 import 'package:sportify/src/views/home/tabs/friends/friends_page.dart';
+import 'package:sportify/src/views/home/tabs/profile/profile_page.dart';
 import 'package:sportify/src/views/home/tabs/statistics/statistic_page.dart';
 import 'package:sportify/src/views/home/tabs/stepOverview/steps_overview.dart';
 import 'package:sportify/src/views/login/login_page.dart';
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   late StreamSubscription<User?> _authListener;
   ReceivePort? _receivePort;
   int _counter = 0;
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   List<Widget> _pages = [];
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -42,6 +43,9 @@ class _HomePageState extends State<HomePage> {
 
       _receivePort?.listen((event) async {
         context.read<StepModel>().updateTodaySteps(event.steps);
+        FlutterForegroundTask.updateService(
+            notificationText:
+                "Today's steps: ${context.read<StepModel>().getTodaySteps()}");
         // only update after 50 new steps counted
         if (_counter > 20) {
           await _updateSteps(context);
@@ -84,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       ),
       const FriendsPage(),
       const StatisticPage(),
+      const ProfilePage(),
     ];
   }
 
@@ -126,10 +131,10 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           body: IndexedStack(
             children: _pages,
-            index: _selectedIndex,
+            index: selectedIndex,
           ),
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
+            currentIndex: selectedIndex,
             onTap: changeTab,
             selectedItemColor: Theme.of(context).colorScheme.primary,
             unselectedItemColor: Theme.of(context).colorScheme.secondary,
@@ -146,6 +151,10 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.bar_chart),
                 label: 'Statistics',
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle),
+                label: 'Profile',
+              ),
             ],
           ),
         ),
@@ -155,7 +164,7 @@ class _HomePageState extends State<HomePage> {
 
   void changeTab(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 

@@ -85,23 +85,17 @@ class _SearchPageState extends State<SearchPage> {
             .map(
               (doc) => ListTile(
                 leading: CircleAvatar(
+                  backgroundColor: Colors.transparent,
                   backgroundImage: MemoryImage(base64Decode(doc.get("pic"))),
                 ),
                 title: Text(doc.get("name")),
                 trailing: StatefulBuilder(
                   builder: (BuildContext context, StateSetter stateSetter) {
                     UserModel user = context.read<UserModel>();
-                    bool alreadyInv = user.pendingInv.contains(doc.id);
+                    bool isInvited = user.pendingInv.contains(doc.id);
+                    bool isFriend = user.friends.contains(doc.id);
                     return IconButton(
-                      icon: alreadyInv
-                          ? const Icon(
-                              Icons.pending,
-                              color: Colors.yellow,
-                            )
-                          : const Icon(
-                              Icons.add_circle,
-                              color: Colors.green,
-                            ),
+                      icon: determineIcon(isFriend, isInvited),
                       onPressed: () {
                         users.doc(doc.id).update({
                           'pendingReq': FieldValue.arrayUnion([uid])
@@ -121,10 +115,23 @@ class _SearchPageState extends State<SearchPage> {
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text("Search for a friend"),
+        children: [
+          Text(
+            "Search for a friend",
+            style: Theme.of(context).textTheme.headline4,
+          ),
         ],
       );
+    }
+  }
+
+  Widget determineIcon(bool isFriend, isInvited) {
+    if (isFriend) {
+      return const Icon(Icons.check_circle);
+    } else if (isInvited) {
+      return const Icon(Icons.pending);
+    } else {
+      return const Icon(Icons.add_circle);
     }
   }
 }

@@ -28,30 +28,28 @@ class StepOverviewPage extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Expanded(
+            const StepBox(),
+            Expanded(
               flex: 1,
-              child: StepBox(),
-            ),
-            Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Column(
+              child: Row(
+                children: [
+                  Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Hi ${context.read<StepModel>().username}!",
                         style: Theme.of(context).textTheme.headline3,
                       ),
-                      const Text("Catch up with your friends")
+                      Text("Catch up with your friends", style: Theme.of(context).textTheme.headline4,)
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Expanded(
-              flex: 1,
+              flex: 2,
               child: RankingList(
                 changeTabCallback: changeTabCallback,
               ),

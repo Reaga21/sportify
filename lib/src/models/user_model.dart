@@ -24,6 +24,10 @@ class UserModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  setPic(String base64) {
+    pic = base64;
+    notifyListeners();
+  }
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

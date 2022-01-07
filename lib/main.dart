@@ -1,12 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sportify/src/models/step_model.dart';
+import 'package:sportify/src/views/loading/loading_page.dart';
 import 'package:sportify/src/views/login/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final user = FirebaseAuth.instance.currentUser;
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(
     MultiProvider(
       providers: [
@@ -40,9 +49,11 @@ void main() async {
                 fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white),
             headline3: TextStyle(
                 fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+            headline4: TextStyle(
+                fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
-        home: const MyLogin(),
+        home: user == null ? const MyLogin() : const LoadingPage(),
       ),
     ),
   );
