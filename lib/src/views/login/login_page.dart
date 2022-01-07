@@ -16,7 +16,7 @@ class _MyLoginState extends State<MyLogin> {
   PermissionStatus _permissionStatus = PermissionStatus.denied;
   final Permission _permission = Permission.activityRecognition;
 
-  final _emailInput = TextEditingController(text: 'karl@gmail.de');
+  final _emailInput = TextEditingController(text: 'user@email.com');
   final _passInput = TextEditingController(text: '123456');
 
   @override
@@ -42,76 +42,86 @@ class _MyLoginState extends State<MyLogin> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-
         child: SingleChildScrollView(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-          Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: Text(
-            "Login",
-            style: Theme.of(context).textTheme.headline1,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: CircleAvatar(
+                    radius: 64,
+                    backgroundImage: const Image(
+                            image: AssetImage('assets/mann_mit_wasser.jpg'))
+                        .image),
+              ),
+              const SizedBox(height: 50),
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  controller: _emailInput,
+                  decoration: const InputDecoration(hintText: 'Email'),
+                ),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  controller: _passInput,
+                  obscureText: true,
+                  decoration: const InputDecoration(hintText: 'Password'),
+                ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              SizedBox(
+                width: 150,
+                child: ElevatedButton(
+                  child: const Text('Login'),
+                  onPressed: () {
+                    FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: _emailInput.text, password: _passInput.text)
+                        .then(
+                      (_) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoadingPage()));
+                      },
+                    ).catchError((error) {
+                      if (error.code == 'user-not-found') {
+                        _showDialogWrongEmPW();
+                      } else if (error.code == 'wrong-password') {
+                        _showDialogWrongEmPW();
+                      }
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: 150,
+                child: ElevatedButton(
+                  child: const Text('Create an Account'),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const Registration()));
+                  },
+                ),
+              ),
+            ],
           ),
-      ),
-      const SizedBox(height: 50),
-      SizedBox(
-          width: 250,
-          child: TextField(
-            controller: _emailInput,
-            decoration: const InputDecoration(hintText: 'Email'),
-          ),
-      ),
-      const SizedBox(
-          height: 25,
-      ),
-      SizedBox(
-          width: 250,
-          child: TextField(
-            controller: _passInput,
-            obscureText: true,
-            decoration: const InputDecoration(hintText: 'Password'),
-          ),
-      ),
-      const SizedBox(
-          height: 50,
-      ),
-      ElevatedButton(
-          child: const Text('Sign in with Email'),
-          onPressed: () {
-            FirebaseAuth.instance
-                .signInWithEmailAndPassword(email: _emailInput.text, password: _passInput.text).then(
-                  (_) {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const LoadingPage()));
-              },
-            ).catchError((error) {
-              if(error.code == 'user-not-found'){
-                _showDialogWrongEmPW();
-              }else if(error.code == 'wrong-password'){
-                _showDialogWrongEmPW();
-              }
-            });
-          },
-      ),
-      const SizedBox(
-          height: 20,
-      ),
-      ElevatedButton(
-          child: const Text('Create an Account'),
-          onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const Registration()));
-          },
-      ),
-          ],
-      ),
         ),
-    ),);
+      ),
+    );
   }
 
   Future<void> _showDialogWrongEmPW() async {
@@ -130,13 +140,10 @@ class _MyLoginState extends State<MyLogin> {
             ),
             TextButton(
               child: const Text('Create an Account'),
-
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const Registration()));
-            },
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const Registration()));
+              },
             ),
           ],
         );
