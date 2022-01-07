@@ -38,7 +38,7 @@ class ChartMonthlyAverage extends StatelessWidget {
                     text: 'Monthly (Average)'),
                 series: <ChartSeries>[
                   BarSeries<StepsData, dynamic>(
-                      color: Color(0xFFDE6482),
+                      color: const Color(0xFFDE6482),
                       dataSource:
                       getChartDataMonthly(dataSteps.data!),
                       xValueMapper: (StepsData data, _) =>

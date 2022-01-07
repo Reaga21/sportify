@@ -37,7 +37,7 @@ class ChartThirtyDays extends StatelessWidget {
                     text: 'Overview (Thirty Days)'),
                 series: <ChartSeries>[
                   BarSeries<StepsData, dynamic>(
-                      color: Color(0xFFDE6482),
+                      color: const Color(0xFFDE6482),
                       dataSource:
                       getChartDataThirty(dataSteps.data!),
                       xValueMapper: (StepsData data, _) =>
