@@ -2,11 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:sportify/src/views/home/tabs/statistics/chart_monthly_average.dart';
-import 'package:sportify/src/views/home/tabs/statistics/chart_seven_days.dart';
-import 'package:sportify/src/views/home/tabs/statistics/chart_thirty_days.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:sportify/src/util/dates.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_monthly_average.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_seven_days.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_thirty_days.dart';
+
 
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key}) : super(key: key);
