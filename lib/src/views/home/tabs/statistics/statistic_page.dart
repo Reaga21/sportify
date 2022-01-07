@@ -1,19 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:sportify/src/util/dates.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_monthly_average.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_seven_days.dart';
+import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_thirty_days.dart';
 
 
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key}) : super(key: key);
-
 
   @override
   State<StatisticPage> createState() => _StatisticPageState();
 }
 
 class _StatisticPageState extends State<StatisticPage> {
+  final controller = PageController(keepPage: true);
+  final pages = [
+    const ChartSevenDays(),
+    const ChartThirtyDays(),
+    const ChartMonthlyAverage(),
+  ];
+
   Future<Map<String, dynamic>> readData() async {
     CollectionReference steps = FirebaseFirestore.instance.collection('steps');
     DocumentSnapshot date =
@@ -32,151 +40,52 @@ class _StatisticPageState extends State<StatisticPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-
-        child:SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Text(
-                  "Statistics",
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  textAlign: TextAlign.center,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Text(
+                "Statistics",
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
+                textAlign: TextAlign.center,
               ),
-              FutureBuilder(
-                  future: readData(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<Map<String, dynamic>> dataSteps) {
-                    if (dataSteps.hasError) {
-                      return const Text("A problem has occurred!");
-                    }
-                    if (!dataSteps.hasData) {
-                      return const CircularProgressIndicator();
-                    }
-                    return Column(
-                      children: [
-                        SfCartesianChart(
-                            title: ChartTitle(text: 'Overview Steps (Last Seven Days)'),
-                            series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
-                                  dataSource: getChartDataSeven(dataSteps.data!),
-                                  xValueMapper: (StepsData data, _) =>
-                                      shortDate(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
-                            ],
-                            primaryXAxis: CategoryAxis(),
-                            primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                        ),
-                        SfCartesianChart(
-                            title: ChartTitle(text: 'Overview Steps (Last Thirty Days)'),
-                            series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
-                                  dataSource: getChartDataThirty(dataSteps.data!),
-                                  xValueMapper: (StepsData data, _) =>
-                                      shortDate(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
-                            ],
-                            primaryXAxis: CategoryAxis(),
-                            primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                        ),
-                        SfCartesianChart(
-                            title: ChartTitle(text: 'Monthly Overview Steps (average)'),
-                            series: <ChartSeries>[
-                              BarSeries<StepsData, dynamic>(
-                                  dataSource: getChartDataMonthly(dataSteps.data!),
-                                  xValueMapper: (StepsData data, _) =>
-                                      monthYear(data.date),
-                                  yValueMapper: (StepsData data, _) => data.steps),
-                            ],
-                            primaryXAxis: CategoryAxis(),
-                            primaryYAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                        ),
-
-
-                      ],
-                    );
-                  })
-            ],
-          ),
+            ),
+            Expanded(
+              child: PageView.builder(
+                itemBuilder: (_, index) {
+                  return pages[index % pages.length];
+                },
+                controller: controller,
+                itemCount: pages.length,
+              ),
+            ),
+            SmoothPageIndicator(
+              controller: controller,
+              onDotClicked: (init) => controller.animateToPage(init,
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeInQuad),
+              count: pages.length,
+              effect: JumpingDotEffect(
+                dotColor: Theme.of(context).colorScheme.secondaryVariant,
+                activeDotColor: Theme.of(context).colorScheme.primary,
+                verticalOffset: 20,
+                dotHeight: 8,
+                dotWidth: 8,
+                jumpScale: .7,
+              ),
+            ),
+          ],
         ),
-      ),
+        ),
     );
   }
-
-  List<StepsData> getChartDataSeven(Map<String, dynamic> dataSteps) {
-    final List<StepsData> chartData = [];
-
-    for (MapEntry entry in dataSteps.entries) {
-      chartData.add(StepsData(
-          DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
-    }
-    chartData.sort((a, b) => a.date.compareTo(b.date));
-    if (chartData.length > 7) {
-      chartData.removeRange(0, chartData.length - 7);
-    }
-    return chartData;
-  }
-
-  List<StepsData> getChartDataThirty(Map<String, dynamic> dataSteps) {
-    final List<StepsData> chartData = [];
-
-    for (MapEntry entry in dataSteps.entries) {
-
-      chartData.add(StepsData(
-          DateTime.parse(entry.key), entry.value['stepsDay'])); //DATUM
-    }
-    chartData.sort((a, b) => a.date.compareTo(b.date));
-    if (chartData.length > 30) {
-      chartData.removeRange(0, chartData.length - 30);
-    }
-    return chartData;
-  }
-  List<StepsData> getChartDataMonthly(Map<String, dynamic> dataSteps) {
-    final List<StepsData> chartData = [];
-    int aggregatedSteps = 0;
-    int count = 0;
-
-    for (MapEntry entry in dataSteps.entries)
-
-    {
-      if(DateTime.parse(entry.key).isSameYearAndMonth(DateTime.parse(entry.key).add(const Duration(days:1)))) {
-       aggregatedSteps += int.parse(entry.value['stepsDay']!.toString());
-       ++count;
-        chartData.add(StepsData(
-            DateTime(DateTime.parse(entry.key).year, DateTime.parse(entry.key).month), aggregatedSteps~/count)); //DATUM
-      }
-    }
-    chartData.sort((a, b) => a.date.compareTo(b.date));
-    if (chartData.length > 30) {
-      chartData.removeRange(0, chartData.length - 30);
-    }
-    return chartData;
-  }
-
-
 }
 
-class StepsData {
-  StepsData(this.date, this.steps);
-
-  final DateTime date;
-  final int steps;
-}
-extension DateTimeComparison on DateTime{
-  bool isSameYearAndMonth(DateTime other){
+extension DateTimeComparison on DateTime {
+  bool isSameYearAndMonth(DateTime other) {
     return ((year == other.year) && (month == other.month));
   }
-
-
 }

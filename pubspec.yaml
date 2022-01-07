@@ -29,6 +29,7 @@ dependencies:
   syncfusion_flutter_charts: ^19.3.57
   fl_chart: ^0.40.6
   fluttertoast: ^8.0.8
+  smooth_page_indicator: ^1.0.0+2
 
 
 dev_dependencies:
