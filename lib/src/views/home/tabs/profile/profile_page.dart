@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,7 +17,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _emailInput = TextEditingController();
   final _passInput = TextEditingController();
-  final user = FirebaseAuth.instance.currentUser;
+  final user = FirebaseAuth.instance.currentUser!;
+  final users = FirebaseFirestore.instance.collection("users");
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _showDeleteAccount,
                       style: ElevatedButton.styleFrom(primary: Colors.red),
                       child: const Text("Delete Account")),
                 ),
@@ -119,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _updateUser() {
     if (_emailInput.text.isNotEmpty) {
-      user!.updateEmail(_emailInput.text).then((_) {
+      user.updateEmail(_emailInput.text).then((_) {
         _showToast("Email updated");
         _emailInput.clear();
       }).catchError((error) {
@@ -131,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     }
     if (_passInput.text.isNotEmpty) {
-      user!.updatePassword(_passInput.text).then((_) {
+      user.updatePassword(_passInput.text).then((_) {
         _showToast("Password updated");
         _passInput.clear();
       }).catchError((error) {
@@ -145,6 +147,32 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_passInput.text.isEmpty && _emailInput.text.isEmpty) {
       _showToast("No change");
     }
+  }
+
+  Future<void> _showDeleteAccount() {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Do you really want to delete your account?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await deleteAccount();
+              },
+            ),
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showToast(String msg) {
@@ -161,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showInvalidPassword() {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Password is too weak!'),
@@ -181,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showInvalidEmail() {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Invalid Email!'),
@@ -201,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showRelog() {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Please renew your login'),
@@ -217,5 +245,27 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       },
     );
+  }
+
+  deleteAccount() async {
+    await users.doc(user.uid).delete();
+    await FirebaseFirestore.instance.collection("steps").doc(user.uid).delete();
+    final toDelete = [
+      ...(await users.where("pendingInv", arrayContains: user.uid).get()).docs,
+      ...(await users.where("pendingReq", arrayContains: user.uid).get()).docs,
+      ...(await users.where("friends", arrayContains: user.uid).get()).docs
+    ];
+    for (final doc in toDelete) {
+      deleteUidFromDoc(doc.id);
+    }
+    user.delete();
+  }
+
+  deleteUidFromDoc(String uid) {
+    users.doc(uid).update({
+      'pendingReq': FieldValue.arrayRemove([user.uid]),
+      'pendingInv': FieldValue.arrayRemove([user.uid]),
+      'friends': FieldValue.arrayRemove([user.uid])
+    });
   }
 }
