@@ -6,6 +6,9 @@ Eine mobile Flutter-Applikation.
 Projektarbeit angefertigt für das Modul Mobile Systeme im WS21/22
 Projektmitarbeiter: Klaas Pelzer, Andrea Robitzsch
 
+## Screencast
+
+![Screencast Gif](https://github.com/Reaga21/sportify/blob/master/Screencast_Sportify.gif)
 
 ## Über die App Sportify
 
