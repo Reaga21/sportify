@@ -193,7 +193,6 @@ class FirstTaskHandler implements TaskHandler {
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
     pedometer.listen((event) {
-      FlutterForegroundTask.updateService(notificationText: '$event');
       sendPort?.send(event);
     }).onError((error) =>
         FlutterForegroundTask.updateService(notificationText: '$error'));

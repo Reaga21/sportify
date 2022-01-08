@@ -66,7 +66,7 @@ class ProfilePicWidget extends StatelessWidget {
                                 title: const Text('Photo Library'),
                                 onTap: () async {
                                   final newImg = await _imgFromGallery();
-                                  user.setPic(newImg);
+                                  users.doc(uid).update({"pic": newImg});
                                   Navigator.of(context).pop();
                                 }),
                             ListTile(

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sportify/src/models/step_model.dart';
@@ -15,6 +16,7 @@ class LoadingPage extends StatefulWidget {
 
 class _LoadingPageState extends State<LoadingPage> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
+  final Permission _permission = Permission.activityRecognition;
 
   Future<BuildContext> _setup(BuildContext context) async {
     DocumentSnapshot stepsSnap =
@@ -22,6 +24,11 @@ class _LoadingPageState extends State<LoadingPage> {
     StepModel stepModel =
         StepModel.fromJson(stepsSnap.data() as Map<String, dynamic>);
     context.read<StepModel>().setStepModel(stepModel);
+    PermissionStatus status = await _permission.status;
+    while (status != PermissionStatus.granted) {
+      Future.delayed(const Duration(milliseconds: 500));
+      status = await _permission.status;
+    }
     return context;
   }
 
