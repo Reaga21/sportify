@@ -31,11 +31,18 @@ Mit der Sportify App können:
 
 # Codeaufbau:
 
-Die Codedateien der App befinden sich im "lib"-Ordner des Projektordners "Sportify".
-Im "Lib"-Ordner befinden sich die Ordner "Assets" sowie "src" und die main.dart Datei, die den Einstiegspunkt der App darstellt. Im "asset"-Ordner liegen Ressourcen-Dateien, wie zum Beispiel in der App verwendete Bilddateien.
+Die Codedateien der App befinden sich im "lib"-Ordner des Projektordners "Sportify".  
+Im "Lib"-Ordner befinden sich die Ordner "Assets" sowie "src" und die main.dart Datei, die den Einstiegspunkt der App darstellt. Im "asset"-Ordner liegen Ressourcen-Dateien, wie zum Beispiel in der App verwendete Bilddateien.  
+  
 Im "src"-Ordner befinden sich die eigentlichen Quelldateien. Der "src"-Ordner unterteilt sich in die Ordner: "model", "util" und "views".<br>
-Im Ordner "model" befinden sich alle Klassen, der in der App verwendeten Datenmodelle.
-Im "util"-Ordner befinden sich Hilfsfunktionen.
-Der "views"-Ordner umfasst die einzelnen Ansichten (Screens) der App. Dieser Ordner unterteilt sich dementsprechend in Unterordner "home", "loading", "login" und "registration". In all diesen Ordnern befindet sich die .dart Datei der entsprechenden Ansicht. Da die unterschiedlichen Tabs des Home-Screens mittels einer BottomNavigationBar gesteuert werden, unterteilt sich der "home"-Ordner in die home_page.dart (Einstieg des Home-Screens) und den Unterordnern der einzelnen aus dem Home-Screen ansteuerbaren Tabs ("friends", "profile", "statistics", "stepOverview"). In den Tabs "friends" und "statistics" ergibt sich eine analoge Struktur. Der "friends"-Screen weist zwei unterschiedliche Tabs auf, die mittels einer TabBar gesteuert werden. Der "statistics"-Screen umfasst drei unterschiedliche Tabs (die einzelnden Diagramme), die mittels eines PageControllers gesteuert werden.<br>
+  
+Im Ordner "model" befinden sich alle Klassen, der in der App verwendeten Datenmodelle.  
+  
+Im "util"-Ordner befinden sich Hilfsfunktionen.  
+  
+Der "views"-Ordner umfasst die einzelnen Ansichten (Screens) der App. Dieser Ordner unterteilt sich dementsprechend in Unterordner "home", "loading", "login" und "registration". In all diesen Ordnern befindet sich die .dart Datei der entsprechenden Ansicht. Da die unterschiedlichen Tabs des Home-Screens mittels einer BottomNavigationBar gesteuert werden, unterteilt sich der "home"-Ordner in die home_page.dart (Einstieg des Home-Screens) und den Unterordnern der einzelnen aus dem Home-Screen ansteuerbaren Tabs ("friends", "profile", "statistics", "stepOverview").  
+  
+In den Tabs "friends" und "statistics" ergibt sich eine analoge Struktur. Der "friends"-Screen weist zwei unterschiedliche Tabs auf, die mittels einer TabBar gesteuert werden. Der "statistics"-Screen umfasst drei unterschiedliche Tabs (die einzelnden Diagramme), die mittels eines PageControllers gesteuert werden.  
+  
 Die Dateien der Unittests ("step_model_test.dart") und Widgettests ("step_box_test.dart") befinden sich im Ordner "test".<br>
-Für das automatisierte Testen bei Pullrequests wird Githubworkflow verwendet.
+Für das automatisierte Testen bei Pull Requests wird Github workflow verwendet.  
