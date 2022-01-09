@@ -95,10 +95,10 @@ class _HomePageState extends State<HomePage> {
   void _initForegroundTask() {
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
-        channelId: 'notification_channel_id',
-        channelName: 'Foreground Notification',
+        channelId: 'step_channel_id',
+        channelName: 'Steps Notification',
         channelDescription:
-            'This notification appears when the foreground service is running.',
+            'This notification shows the steps taken for today.',
         channelImportance: NotificationChannelImportance.LOW,
         priority: NotificationPriority.LOW,
         iconData: const NotificationIconData(
