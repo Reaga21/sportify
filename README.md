@@ -12,7 +12,7 @@ Projektmitarbeiter: Klaas Pelzer, Andrea Robitzsch
 
 ## Über die App Sportify
 
-Die App Sportify stellt eine kompetetive Schrittzähler-App dar und richtet sich an Nutzer jeden Alters, die ihre Schritte zählen und mit Ihren Freunden innerhalb der App teilen und vergleichen möchten.
+Die App Sportify stellt eine kompetitive Schrittzähler-App dar und richtet sich an Nutzer jeden Alters, die ihre Schritte zählen und mit Ihren Freunden innerhalb der App teilen und vergleichen möchten.
 Die Schritte mit den eigenen Freunden zu teilen und zu vergleichen generiert eine Motivation selber mehr tägliche Schritte zu machen.
 
 Mit der Sportify App können:
