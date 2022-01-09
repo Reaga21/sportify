@@ -104,8 +104,8 @@ class ChartMonthlyAverage extends StatelessWidget {
       }
     }
     chartData.sort((a, b) => a.date.compareTo(b.date));
-    if (chartData.length > 12) {
-      chartData.removeRange(0, chartData.length - 12);
+    if (chartData.length > 365) {
+      chartData.removeRange(0, chartData.length - 365);
     }
     return chartData;
   }

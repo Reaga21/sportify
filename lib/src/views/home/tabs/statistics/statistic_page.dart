@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:sportify/src/views/home/tabs/statistics/tabs/chart_monthly_average.dart';
@@ -22,15 +21,6 @@ class _StatisticPageState extends State<StatisticPage> {
     const ChartMonthlyAverage(),
   ];
 
-  Future<Map<String, dynamic>> readData() async {
-    CollectionReference steps = FirebaseFirestore.instance.collection('steps');
-    DocumentSnapshot date =
-        await steps.doc(FirebaseAuth.instance.currentUser!.uid).get();
-    Map<String, dynamic> data1 = date.data() as Map<String, dynamic>;
-    Map<String, dynamic> dataSteps = data1['steps'] as Map<String, dynamic>;
-
-    return dataSteps;
-  }
 
   @override
   Widget build(BuildContext context) {
